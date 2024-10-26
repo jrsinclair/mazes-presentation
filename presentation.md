@@ -1,3 +1,13 @@
+# The joy of recursion, immutable data, and pure functions
+
+James Sinclair
+
+---
+
+# Making mazes with JavaScript
+
+---
+
 ## Make it practical
 
 Note: I try to be practical when I'm writing or speaking. I want to give people tools they can use to make their coding lives better. So, instead of giving examples about adding numbers together, I talk about creating DOM elements and processing JSON data. Those things are practical, and I don't want to waste people's time on things they're not going to use.
@@ -37,6 +47,8 @@ Note: But we can build our maze in such a way that we'll learn about immutable d
 
 ---
 
+## Let's go
+
 Note: So let's get into it.
 
 ---
@@ -59,25 +71,37 @@ Note: We start by picking a room at random. I've picked one near the middle, but
 
 ---
 
+![Four adjoining rooms to the north, south, east, and west](/four-adjoining-rooms.svg)
+
 Note: Then, we make a list of the adjoining rooms to the north, south, east, and west that _aren't_ already connected to another room.
 
 ---
+
+![Join the room to the east](/join-room-north.svg)
 
 Note: We pick one of those rooms at random, and we punch a hole through the wall connecting those two rooms.
 
 ---
 
+![Three adjoining rooms to the north, south, and east](/two-adjoining-rooms.svg)
+
 Note: Then, we repeat that process for the room we've just connected. This time, we have only three directions to choose from. This is because the room to the west is connected to this one.
 
 ---
+
+![Room with no more available adjacent rooms](/back-track-point.svg)
 
 Note: And we keep doing this until we reach a room where there are no more directions to choose from. Once we get there, then we backtrack one square and start again.
 
 ---
 
+![Almost complete maze](/final-maze.svg)
+
 Note: We keep repeating this process until we have no unconnected squares left.
 
 ---
+
+![Complete maze](/final-maze-with-exits.svg)
 
 Note: Once that's done, we can pick an entry and an exit.
 
@@ -90,18 +114,17 @@ Note: Let's try and write that out in words, as an algorithm.
 ---
 
 1. Start with a randomly selected room. <!-- .element: class="fragment" data-fragment-index="0" -->
-2. Check how many rooms are left unconnected. If there are none left, we're done. <!-- .element: class="fragment" data-fragment-index="2" -->
-3. Make a list of rooms adjacent to the current room, ot yet connected to another room. <!-- .element: class="fragment" data-fragment-index="3" -->
-4. If all the adjacent rooms are already connected, go back one room and repeat from 2. <!-- .element: class="fragment" data-fragment-index="4" -->
-5. Pick one of the unconnected adjacent rooms at random and connect it to this one. <!-- .element: class="fragment" data-fragment-index="5" -->
-6. Move to the new room and repeat from 2. <!-- .element: class="fragment" data-fragment-index="6" -->
+2. Make a list of rooms adjacent to the current room, not yet connected to another room. <!-- .element: class="fragment" data-fragment-index="1" -->
+3. If this connected adjacent rooms list is empty, go back one room (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
+4. Pick one of the rooms in the list at random and connect it. <!-- .element: class="fragment" data-fragment-index="3" -->
+5. Move to this new room and repeat from 2. <!-- .element: class="fragment" data-fragment-index="4" -->
 
 ---
 
 ## Let's turn that into code
 
 Note: We now know the basic approach. But we need ot turn that into code.  
-To make life easier for ourselves, we're going to create a couple of immutable data structures… from scratch.
+To make life easier for ourselves, we're going to create an immutable data structure… from scratch.
 
 ---
 
@@ -129,20 +152,7 @@ Note: If we were using TypeScript, I might do things differently, but with Vanil
 
 ---
 
-```javascript
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-```
-
-Note: So we'll create a constructor that takes an x-value and a y-value.
-
----
-
-Note: Putting that all together, we get a simple class.
-
-```javascript
+```javascript [5-8]
 // point.js
 class Point {
   x;
@@ -154,19 +164,21 @@ class Point {
 }
 ```
 
+Note: So we'll create a constructor that takes an x-value and a y-value. And we now have a simple class.
+
 ---
 
 ## This isn't immutable (yet)
 
-Note: Now, so far, this is rather obvious and boring. And it's not immutable. So what we're going to do is hid this class away. We won't export it. Instead, we're going to create a cosntructor function,, `point()`, and that will be the only way to get yourself a point.
+Note: Now, so far, this is rather obvious and boring. And it's not immutable. So what we're going to do is hide this class away. We won't export it. Instead, we're going to create a constructor function, `point()`, and that will be the only way to get yourself a point.
 
 ---
 
 ```javascript
 // point.js
 export function point(x, y) {
-  // This is is how the function would work if it
-  // were not immutable.
+  // This is is how the function would work if it were
+  // not immutable.
   const p = new Point(x, y);
   return p;
 }
@@ -185,7 +197,7 @@ Note: Ironically, we make this happen by creating a mutable Map to act as a cach
 
 ---
 
-```javascript
+```javascript [1-9|3-4|6-8]
 // point.js
 export function point(x, y) {
   const key = `${x}-${y}`;
@@ -218,7 +230,7 @@ Note: While we're at it, we'll freeze the object so the runtime will stop anyone
 
 ---
 
-## Why Point?
+## Why call it Point?
 
 Note: Now, at this point, you might be wondering, why did I call this class 'Point'? Why not 'Room'? Our algorithm is about rooms, not points.  
   
@@ -226,108 +238,15 @@ And in one sense, it doesn't matter. Whether it's called Point or Room, it still
 
 ---
 
-## Another class
-
-Note: Before we get to coding our algorithm, we need one more helper class. We'll call it Line.
-
----
-
-## Line
-
-Note: Line is what we'll use to represent connected rooms. It holds two pieces of data, both Points.
-
----
-
-```javascript
-// line.js
-class Line {
-  a;
-  b;
-  constructor(a, b) {
-    this.a = a;
-    this.b = b;
-  }
-}
-```
-
-Note: So here's our constructor. We have point A, and point B.
-
----
-
-```javascript
-// line.js
-export const line = (a, b) => {
-    const str = `${a}-${b}`;
-    if (allLines.has(str)) return allLines.get(str);
-    const newLine = new Line(a, b);
-    Object.freeze(newLine);
-    allLines.set(str, newLine);
-    return newLine;
-};
-```
-
-Note: But, like Point, we're not going to export our class. Instead we're going to export a line constructor function. And, like we did for Point, we create a cache to memoize them, and freeze them on the way out.
-
----
-
-## A subtle bug
-
-Note: Except, there'a subtle bug in this code. Because we'll be using Line to represent a connection betwen two rooms.
-
----
-
-```javascript
-const pointA = point(3, 5);
-const pointB = point(4, 5);
-
-const lineAB = line(pointA, pointB);
-const lineBA = line(pointB, pointA);
-
-lineAB === lineBA // Should be true, but it's not.
-```
-
-Note: And, for our purposes, a connection from room A to B, is no different to a connection from room B to A. We don't care which direction the line goes.
-
----
-
-
-```javascript
-// point.js
-  lte(b) {
-    return this.y < b.y ||
-      (this.y == b.y && this.x <= b.x);
-  }
-```
-
-Note: To rectify this, we need to go back to our Point class and add in a way to compare points. We can already test whether they're equal. But we need a way to test if one point is smaller than another. We do that by adding a method for 'less than or equal to', or `lte()` for short.
-
----
-
-```javascript [2,4]
-// line.js
-export const line = (a, b) => {
-    const str = a.lte(b) ? `${a}-${b}` : `${b}-${a}`;
-    if (allLines.has(str)) return allLines.get(str)!;
-    const newLine = a.lte(b) ? new Line(a, b) : new Line(b, a);
-    Object.freeze(newLine);
-    allLines.set(str, newLine);
-    return newLine;
-};
-```
-
-Note: With that in place, we can adjust our line function to make sure the smallest point always comes first:
-
----
-
 ## Why?
 
-Note: We now hae these two helper classes. And let's face it, they don't do much. So why do we bother? Why not just use a plain ol' JavaScript object? Zero code needed.
+Note: We now a helper class. And let's face it, it doesn't do much. So why do we bother? Why not just use a plain ol' JavaScript object? Zero code needed.
 
 ---
 
 ## ===
 
-Note: In the future, we may not need to build immutable helper classes like this. But for now, they let us do something plain objects can't. I can compare them using triple equals.
+Note: In the future, we may not need to build immutable helper classes like this. I could use immutable objects built into JavaScript. But for now, building a special class like this lets me do something plain objects can't. I can compare them using triple equals.
 
 ---
 
@@ -347,13 +266,13 @@ Note: So let's try this. I'll create an object A, and I create an object B and c
 
 ## So what?
 
-Note: Again, you might legitimately ask, 'So what?' But things get interesting if I want to combine these with other data structures.
+Note: Again, you might legitimately ask, 'So what?' But things get interesting if I combine this with other data structures.
 
 ---
 
 ## Set
 
-Note: Suppose I want to put these into a Set. I'm going to use the Set from the venerable Immutable.js library, but it will work just fine with the built-in JavaScript Set too.
+Note: Suppose I want to put a point into a Set. I'm going to use the Set from the venerable Immutable.js library, but it will work just fine with the built-in JavaScript Set too.
 
 ---
 
@@ -415,11 +334,10 @@ Note: So, let's get into writing our algorithm. We'll go over it one more time.
 ---
 
 1. Start with a randomly selected room. <!-- .element: class="fragment" data-fragment-index="0" -->
-2. Check how many rooms are left unconnected. If none are left, we're done. <!-- .element: class="fragment" data-fragment-index="1" -->
-3. Make a list of rooms adjacent to the current room, not yet connected to another room. <!-- .element: class="fragment" data-fragment-index="2" -->
-4. If this connected adjacent rooms list is empty, go back one room. <!-- .element: class="fragment" data-fragment-index="3" -->
-5. Pick one of the rooms in the list at random and connect it. <!-- .element: class="fragment" data-fragment-index="4" -->
-6. Move to this new room and repeat from 2. <!-- .element: class="fragment" data-fragment-index="5" -->
+2. Make a list of rooms adjacent to the current room, not yet connected to another room. <!-- .element: class="fragment" data-fragment-index="1" -->
+3. If this connected adjacent rooms list is empty, go back one room (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
+4. Pick one of the rooms in the list at random and connect it. <!-- .element: class="fragment" data-fragment-index="3" -->
+5. Move to this new room and repeat from 2. <!-- .element: class="fragment" data-fragment-index="4" -->
 
 ---
 
@@ -429,12 +347,12 @@ Note: But there's a step zero we need to complete first. We need a grid of uncon
 
 ---
 
-1. A set of unconnected rooms <!-- .element: class="fragment" data-fragment-index="0" -->
-2. The maze so far (a set of lines) <!-- .element: class="fragment" data-fragment-index="1" -->
+1. A grid of unconnected rooms <!-- .element: class="fragment" data-fragment-index="0" -->
+2. A random room to start in <!-- .element: class="fragment" data-fragment-index="1" -->
 
 ---
 
-## A set of unconnected rooms
+## A grid of unconnected rooms
 
 Note: To help us build that set of unconnected rooms, we're going to do a little bit of math. For now, were going to assume we're only building square mazes.
 
@@ -442,48 +360,36 @@ Note: To help us build that set of unconnected rooms, we're going to do a little
 
 $$ n ^ 2 $$
 
-Note: So the total number of rooms will be $$n^2$$. So we can create an array with $$n^2$$ entries, and map over it to create a list of points. And we then put that into a Set.
+Note: So the total number of rooms will be $$n^2$$. So we can create an array with $$n^2$$ entries, and map over it to create a Map. This Map will have points as keys, and each value for the map will be a List of rooms it's connected to.
 
 ---
 
-## Set
+## Building the grid
 
-And we're using a Set because sets make it a fast operation to ask "Do you have a particular entry?"
+Note: And we're using a Set because sets make it a fast operation to ask "Do you have a particular entry?"
 
 ---
 
 ```javascript
-import {Set, List} from 'immutable';
+import {Map, List} from 'immutable';
 
 const roomList = new Array(n ** 2).fill(undefined).map(
-  (_, i) => point(i % n, Math.floor(i / n))
+  (_, i) => [point(i % n, Math.floor(i / n)), List()]
 );
-const unconnectedRooms = Set(roomList);
+const grid = Map(roomList);
 ```
 
 ---
 
-## The maze so far
+## A random room to start in
 
-Note: For the maze so far, we simply create an empty list.
-
----
-
-```javascript
-const maze = List();
-```
-
----
-
-## One more thing…
-
-Note: In our algorithm, we need to pick things at random from time to time. But in fucntional programming, something that's different every time you call it is considered 'impure'. So, we're going to quickly whip up our own pseudo random number generator to sidestep this problem.
+Note: In our algorithm, we need to pick things at random. Like, for instance, our starting room. But in functional programming, something that's different every time you call it is considered 'impure'. So, we're going to quickly whip up our own pseudo random number generator to sidestep this problem.
 
 ---
 
 ```javascript
 // random.js
-const M = 2 ** 31;
+const M = 2 ** 31; // This defines our range of integers
 const A = 110351245;
 const C = 12345;
 
@@ -497,6 +403,18 @@ Note: This is a lot like the random number generator that most implementations o
 ---
 
 ```javascript
+import { randomInt } from './random';
+
+const seed = Date.now();
+const randomValue1 = randomInt(seed);
+const randomValue2 = randomInt(randomValue1);
+```
+
+Note: To get random numbers, we start with a little bit of impurity by calling `Date.now()`. But, once we've called that, we can get another pseudorandom value by passing that seed to `randomInt()` again. And if I keep doing that, I can get as many pseudorandom numbers as I want. But if I give it the same starting seed, I will always get the same sequence of integers.
+
+---
+
+```javascript
 export function randomInRange(seed, n) {
   const nextSeed = randomInt(seed);
   const randVal = Math.abs(nextSeed) % n;
@@ -504,7 +422,7 @@ export function randomInRange(seed, n) {
 }
 ```
 
-Note: For our purposes though, we' mostly want a random number in a range between 0 and some number. So we'll use another helper. All it does is a little bit of math to make the random number fit the range we want. But, it also returns another number we can use as a seed for future generation.
+Note: For our purposes though, we' mostly want a random number in a range between 0 and some number. So we'll use another helper. All it does is a little bit of math to make the random number fit the range we want. But, it also returns the raw integer, so we can use it as a seed for future generation.
 
 ---
 
@@ -515,16 +433,14 @@ import {randomInRange} from './random.js';
 
 function buildInitialState(n, seed) {
   const roomList = new Array(n ** 2).fill(undefined).map(
-    (_, i) => point(i % n, Math.floor(i / n))
+    (_, i) => [point(i % n, Math.floor(i / n)), List()]
   );
-  const unconnected = Set(roomList);
-
-  const mazeSoFar = List();
+  const grid = Map(roomList);
 
   const [newSeed, roomIdx] = randomInRange(n ** 2);
-  const room = roomList[roomIdx];
+  const room = roomList[roomIdx][0];
 
-  return [room, unconnected, mazeSoFar, newSeed];
+  return [room, grid, newSeed];
 }
 ```
 
@@ -534,7 +450,7 @@ Note: With that in place, we're now able to pick a starting room at random from 
 
 ## Recursion
 
-Noe: We're ready to code our actual algorithm. Now, we're going to do this using recursion. And recursion has a bad reputation.
+Note: We're ready to code our actual algorithm. Now, we're going to do this using recursion. And recursion has a bad reputation.
 
 ---
 
@@ -561,7 +477,7 @@ Note: You've most likely been taught two rules:
 
 ---
 
-```javascript [1-5|2]
+```javascript [1-5|1,4|2]
 let i = 10;
 while (i > 0) {
   // Do something
@@ -599,62 +515,40 @@ Note: Let's apply this to our maze algorithm. What state do we update as we go t
 
 ---
 
-1. Room <!-- .element: class="fragment" data-fragment-index="0" -->
-2. Unconnected rooms <!-- .element: class="fragment" data-fragment-index="1" -->
-3. The maze so far <!-- .element: class="fragment" data-fragment-index="2" -->
-4. The random seed<!-- .element: class="fragment" data-fragment-index="3" -->
+1. The current room <!-- .element: class="fragment" data-fragment-index="0" -->
+2. The maze so far <!-- .element: class="fragment" data-fragment-index="1" -->
+4. The random seed<!-- .element: class="fragment" data-fragment-index="2" -->
 
 Note: At each step, we're considering a particular room. And the room we're considering changes, so that means it's part of our state.  
-  
-Another thing we do as we go along is we connect rooms together. As we do tht, we'll remove those connected rooms from the set of unconnected rooms.  
-  
-And, we'll also keep track of the rooms we connect. That is our 'maze so far'. And,  
-  
-There's one final piece of state that might not  be obvious. And that's our random number seed. So we'll pass that along for the next iteration of our algorithm.
+Another thing we do as we go along is we update our maze by updating the list of rooms a given room is connected to.  
+As we do that, we'll keep track of how many unconnected rooms are left. There's one final piece of state that might not  be obvious.  
+And that's our random number seed. So we'll pass that along for the next iteration of our algorithm.
 
 ---
 
 ```javascript
 // maze.js
-function buildMaze(room, unconnected, mazeSoFar, seed0) {
+function buildMaze(room, mazeSoFar, seed0) {
   // Maze building code goes here
 }
 ```
 
----
-
-## Exit condition
-
-Note: Now, we said that the other important thing to pay attention to was the exit condition. And from our algorithm, we know what that is. So we can write it right away:
-
----
-
-```javascript
-// maze.js
-function buildMaze(room, unconnected, mazeSoFar, seed0) {
-  // Maze building code goes here
-  if (unconnected.size === 0) {
-    return /* ????? */;
-  }
-}
-```
-
-Note: We'll figure out _what_ we need to return in a moment. But at the very least, it's going to include our maze so far.
+Note: So we have enough here to create the signature for our function.
 
 ---
 
 ## Make a list of adjacent rooms not yet connected to another room
 
-Note: With that in place, we've already implemented step 2 of our algorithm. Let's figure out step 3. We make a list of adjacent rooms that aren't yet connected. Let's write a function to do that. 
+Note: We've already figured out how to select a room at random. So let's figure out step 2 of our algorithm. We make a list of adjacent rooms that aren't yet connected. Let's write a function to do that.
 
 ---
 
 ```javascript
 // point.js
-export const NORTH = p(0, -1);
-export const EAST = p(1, 0);
-export const SOUTH = p(0, 1);
-export const WEST = p(-1, 0);
+export const NORTH = point(0, -1);
+export const EAST = point(1, 0);
+export const SOUTH = point(0, 1);
+export const WEST = point(-1, 0);
 ```
 
 Note: We'll start by creating some constants. We have North, South, East, and West here.
@@ -677,10 +571,10 @@ Note: And then we'll create a helper function to add two points together:
 // maze.js
 import {point, NORTH, SOUTH, EAST, WEST} from './point';
 
-function getCandidates(room, unconnected) {
+function getCandidates(room, mazeSoFar) {
     return [NORTH, SOUTH, EAST, WEST]
         .map(addPoint(room))
-        .filter((pt) => unconnected.has(pt));
+        .filter((pt) => mazeSoFar.get(pt).size === 0);
 }
 ```
 
@@ -690,14 +584,10 @@ Note: And with those in place, we can write a function to find unconnected adjac
 
 ```javascript [8-9]
 // maze.js
-function buildMaze(room, unconnected, mazeSoFar, seed0) {
-  // Maze building code goes here
-  if (unconnected.size === 0) {
-    return /* ????? */;
-  }
+function buildMaze(room, mazeSoFar, seed0) {
 
   // Find adjacent unconnected rooms.
-  const candidates = getCandidates(room, unconnected);
+  const candidates = getCandidates(room, mazeSoFar);
 }
 ```
 
@@ -713,34 +603,26 @@ Note: Now, it might be that there are no unconnected rooms left adjacent to the 
 
 ```javascript [10-12]
 // maze.js
-function buildMaze(room, unconnected, mazeSoFar, seed0) {
-  // Maze building code goes here
-  if (unconnected.size === 0) {
-    return /* ????? */;
-  }
+function buildMaze(room, mazeSoFar, seed0) {
 
   // Find adjacent unconnected rooms.
-  const candidates = getCandidates(room, unconnected);
+  const candidates = getCandidates(room, mazeSoFar);
   if (candidates.length === 0) {
     return /* ????? */;
   }
 }
 ```
 
-Note: So, we're supposed to go back one room. In our case, that means we'll return. This becomes another exit condition. We'll come back and fill in that return value in a moment.
+Note: So, we're supposed to go back one room. In our case, that means we'll return. This becomes our exit condition. We'll come back and fill in that return value in a moment.
 
 ---
 
 ```javascript [14-18]
 // maze.js
-function buildMaze(room, unconnected, mazeSoFar, seed0) {
-  // Maze building code goes here
-  if (unconnected.size === 0) {
-    return /* ????? */;
-  }
+function buildMaze(room, mazeSoFar, seed0) {
 
   // Find adjacent unconnected rooms.
-  const candidates = getCandidates(room, unconnected);
+  const candidates = getCandidates(room, mazeSoFar);
   if (candidates.length === 0) {
     return /* ????? */;
   }
@@ -750,6 +632,7 @@ function buildMaze(room, unconnected, mazeSoFar, seed0) {
     seed0,
     candidates.length
   );
+  const roomToConnect = candidates[idx];
 }
 ```
 
@@ -757,23 +640,27 @@ Note: Next, we pick a room from the candidate list at random. That give us a new
 
 ---
 
-```javascript [6-12]
+```javascript [1-17|6-9|11-16]
 // maze.js
-function buildMaze(room, unconnected, mazeSoFar, seed0) {
+function buildMaze(room, mazeSoFar, seed0) {
   
   // … Snip …
 
+  // Construct a new maze with the connected room.
+  const mazeWithConnectedRoom = mazeSoFar
+    .set(room, mazeSoFar.get(room).push(newRoom))
+    .set(newRoom, mazeSoFar.get(newRoom).push(room));
+
   // Move to the newly connected room.
   const someReturnValueWeHaventFiguredOut = buildMaze(
-    candidates[idx],
-    unconnected.remove(candidates[idx]),
-    mazeSoFar.push(line(room, candidates[idx])),
+    roomToConnect,
+    mazeWithConnectedRoom,
     seed1,
   );
 }
 ```
 
-Note: So, we now know which room to move on to next. And we move on to the next room by calling our `buildMaze()` function recursively. We just have to make sure that we update each piece of state that we pass on. And again, we still need to figure out that return value.
+Note: So, we now know which room to move on to next. So, we can connect two rooms by updating our Map, pushing each room onto the list. And we move on to the next room by calling our `buildMaze()` function recursively. We just have to make sure that we update each piece of state that we pass on. And again, we still need to figure out that return value.
 
 ---
 
@@ -785,13 +672,12 @@ Note: When we call that, our algorithm is going to go off and connect a bunch of
 
 ## But what's the state now?
 
-Note: However, when we call the recursive function, we need to make sure we update the state. And for that, we need the previous call to tell us what the new state should be. In particular, we need 3 things:
+Note: However, when we call the recursive function, we need to make sure we update the state. And for that, we need the previous call to tell us what the new state should be. In particular, we need 2 things:
 
 ---
 
 1. The updated maze
-2. Updated unconnected rooms
-3. A new random seed
+2. A new random seed
 
 Note: We already know which room to pass along. But this list tells us what our return value from the function needs to be. Each time we call `buildMaze()` we will need to pass back each of these three values.
 
@@ -799,21 +685,25 @@ Note: We already know which room to pass along. But this list tells us what our 
 
 ```javascript [7|14-16]
 // maze.js
-function buildMaze(room, unconnected, mazeSoFar, seed0) {
+function buildMaze(room, mazeSoFar, seed0) {
   
   // … Snip …
 
+  // Construct a new maze with the connected room.
+  const mazeWithConnectedRoom = mazeSoFar
+    .set(room, mazeSoFar.get(room).push(newRoom))
+    .set(newRoom, mazeSoFar.get(newRoom).push(room));
+  
   // Move to the newly connected room.
-  const [newMaze, newUnconnected, seed2] = buildMaze(
-    candidates[idx],
-    unconnected.remove(candidates[idx]),
-    mazeSoFar.push(line(room, candidates[idx])),
-    seed1,
+  const [newMaze, seed2] = buildMaze(
+    roomToConnect,
+    mazeWithConnectedRoom,
+    seed1
   );
   
   // There may still be other directions we can connect
   // to this room, so we call buildMaze() again.
-  return buildMaze(room, newMaze, newUnconnected, seed2);
+  return buildMaze(room, newMaze, seed2);
 }
 ```
 
@@ -821,18 +711,14 @@ Note: So we fill in those return values. And with those in place, we can make th
 
 ---
 
-```javascript [5,11]
+```javascript [5,22]
 // maze.js
-function buildMaze(room, unconnected, mazeSoFar, seed0) {
-  // Maze building code goes here
-  if (unconnected.size === 0) {
-    return [unconnected, mazeSoFar, seed0];
-  }
+function buildMaze(room, mazeSoFar, seed0) {
 
   // Find adjacent unconnected rooms.
   const candidates = getCandidates(room, unconnected);
   if (candidates.length === 0) {
-    return [unconnected, mazeSoFar, seed0];
+    return [mazeSoFar, seed0];
   }
 
   // Pick a room from the list of candidates.
@@ -841,17 +727,21 @@ function buildMaze(room, unconnected, mazeSoFar, seed0) {
     candidates.length
   );
 
+  // Construct a new maze with the connected room.
+  const mazeWithConnectedRoom = mazeSoFar
+    .set(room, mazeSoFar.get(room).push(newRoom))
+    .set(newRoom, mazeSoFar.get(newRoom).push(room));
+  
   // Move to the newly connected room.
-  const [newMaze, newUnconnected, seed2] = buildMaze(
-    candidates[idx],
-    unconnected.remove(candidates[idx]),
-    mazeSoFar.push(line(room, candidates[idx])),
-    seed1,
+  const [newMaze, seed2] = buildMaze(
+    roomToConnect,
+    mazeWithConnectedRoom,
+    seed1
   );
   
   // There may still be other directions we can connect
   // to this room, so we call buildMaze() again.
-  return buildMaze(room, newMaze, newUnconnected, seed2);
+  return buildMaze(room, newMaze, seed2);
 }
 ```
 
@@ -868,15 +758,10 @@ Note: All we need to do iw wire it up with the initial sate. We'll do that in a 
 ```javascript
 // maze.js
 export function maze(n, seed0) {
-  const [room, unconnected, emptyMaze, seed1]
+  const [room, emptyMaze, seed1]
     = buildInitialState(n, seed0);
 
-  const [maze] = buildMaze(
-    room,
-    unconnected,
-    emptyMaze,
-    seed1
-  );
+  const [maze] = buildMaze(room, emptyMaze seed1);
 
   return maze;
 }
@@ -888,7 +773,25 @@ Note: We craft the initial state, then we build our maze and return it.
 
 ## Demo
 
-<!-- Inserrt live demo -->
+```
+┌──┬┬───────────┐
+│╶┐╵│╶┬─┬─┬─┐╶─┐│
+│╷├╴├╴│╷│╷╵╷└─┐└┤
+││└─┤┌┘│││┌┴─┐└┐│
+│└┬┐╵├╴││└┘┌╴├╴││
+├┐│└─┘╶┴┴──┤╶┤┌┘│
+││└─┬─┐╶┬╴╷├╴│└╴│
+│└┬╴│╷└─┤╶┴┤╶┼─╴│
+│╶┤╶┘├─┐│┌┐└┐├─┐│
+│╷└──┘╷│││└┐│╵╷││
+│├┬───┤╵│╵╷│└┬┘├┤
+││╵╶┬┐└─┴─┼┴╴│╶┘│
+│└┬╴╵├─╴┌╴│╶─┴──┤
+├┐│┌─┤╶─┤╶┴┬──┐╷│
+││└┘╷└─┐└┬╴│┌╴│└┤
+│└──┴─╴└╴│╶┘│╶┴╴│
+└────────┴──┴───┘
+```
 
 Note: And to prove that it works, let's run that code.
 

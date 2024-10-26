@@ -1,0 +1,68 @@
+<svg viewBox="0 0 150 150" width="150" height="150" xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <style>
+        * {
+            font-family: sans-serif;
+        }
+
+        .axis-label {
+            font-size: 14px;
+        }
+
+        .mazelines {
+            fill: transparent;
+        }
+
+        .GlowySquare {
+            fill: #0e85c9;
+            box-shadow: 0 0 5px #0e85c9;
+        }
+
+        .DirectionChoice-line {
+            stroke: #0e85c9;
+            stroke-width: 6.25px;
+        }
+
+        .DirectionChoice-square {
+            fill: #0e85c9;
+            stroke-width: 0;
+        }
+
+        .DirectionChoices {
+            translate: 25px 25px;
+        }
+    </style>
+    <text x="37.5" y="15" class="axis-label" text-anchor="middle">0</text>
+    <text x="62.5" y="15" class="axis-label" text-anchor="middle">1</text>
+    <text x="87.5" y="15" class="axis-label" text-anchor="middle">2</text>
+    <text x="112.5" y="15" class="axis-label" text-anchor="middle">3</text>
+    <text x="15" y="45" class="axis-label" text-anchor="end">0</text>
+    <text x="15" y="70" class="axis-label" text-anchor="end">1</text>
+    <text x="15" y="95" class="axis-label" text-anchor="end">2</text>
+    <text x="15" y="120" class="axis-label" text-anchor="end">3</text>
+    <g class="mazelines">
+        <rect x="25" y="25" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="25" y="50" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="25" y="75" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="25" y="100" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="50" y="25" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="50" y="50" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="50" y="75" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="50" y="100" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="75" y="25" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="75" y="50" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="75" y="75" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="75" y="100" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="100" y="25" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="100" y="50" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="100" y="75" width="25" height="25" stroke="currentColor" stroke-width="1" />
+        <rect x="100" y="100" width="25" height="25" stroke="currentColor" stroke-width="1" />
+    </g>
+    <g class="DirectionChoices">
+        <g class="DirectionChoice DirectionChoice--east">
+            <path class="DirectionChoice-line DirectionChoice-line--east" d="M 37.5 37.5 L 62.5 37.5" />
+            <rect class="DirectionChoice-square DirectionChoice-square--east" x="55" y="30" height="15" width="15" />
+        </g>
+    </g>
+    <rect class="GlowySquare" x="55" y="55" height="15" width="15" />
+</svg>

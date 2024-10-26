@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import 'reveal.js/plugin/highlight/monokai.css';
 import './style.css';
 
@@ -15,4 +16,15 @@ deck.initialize({
   markdown: {
     smartypants: true,
   },
+  transition: 'none',
+  progress: false,
 });
+
+window.deck = deck;
+
+if (import.meta.hot) {
+  import.meta.hot.accept((m) => {
+    console.log('Something updated', m);
+    // deck.sync();
+  });
+}

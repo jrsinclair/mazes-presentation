@@ -1,14 +1,302 @@
+@font-face {
+  font-family: 'Munson';
+  src: url('/fonts/munson-roman.woff2') format('woff2'),
+    url('/fonts/munson-roman.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Munson';
+  src: url('/fonts/munson-bold.woff2') format('woff2'),
+    url('/fonts/munson-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Munson';
+  src: url('/fonts/munson-italic.woff2') format('woff2'),
+    url('/fonts/munson-italic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Munson';
+  src: url('/fonts/munson-bold-italic.woff2')
+      format('woff2'),
+    url('/fonts/munson-bold-italic.woff') format('woff');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rosewood Std Fill';
+  src: url('/fonts/rosewoodstd-fill-regular.woff2')
+      format('woff2'),
+    url('/fonts/rosewoodstd-fill-regular.woff')
+      format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-display: fallback;
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/courier-prime-regular.woff2')
+    format('woff2');
+}
+@font-face {
+  font-display: fallback;
+  font-family: 'Courier Prime';
+  font-style: italic;
+  font-weight: 400;
+  src: url('/fonts/courier-prime-italic.woff2')
+    format('woff2');
+}
+@font-face {
+  font-display: fallback;
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 700;
+  src: url('/fonts/courier-prime-bold.woff2')
+    format('woff2');
+}
+/* courier-prime-bold-italic - latin */
+@font-face {
+  font-display: fallback;
+  font-family: 'Courier Prime';
+  font-style: italic;
+  font-weight: 700;
+  src: url('/fonts/courier-prime-bold-italic.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Franklin Gothic FS';
+  src: url('/fonts/franklingothic-regular.woff2')
+      format('woff2'),
+    url('/fonts/franklingothic-regular.woff')
+      format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Franklin Gothic FS';
+  src: url('/fonts/franklingothic-bold.woff2')
+      format('woff2'),
+    url('/fonts/franklingothic-bold.woff')
+      format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Franklin Gothic FS';
+  src: url('/fonts/franklingothic-italic.woff2')
+      format('woff2'),
+    url('/fonts/franklingothic-italic.woff')
+      format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Franklin Gothic FS';
+  src: url('/fonts/franklingothic-bold-italic.woff2')
+      format('woff2'),
+    url('/fonts/franklingothic-bold-italic.woff')
+      format('woff');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --another-navy: #10233f;
+
+  font-family: Munson, Georgia, serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: var(--another-navy);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  --r-main-font: 'Munson', Georgia, serif;
+  background-color: var(--another-navy);
+}
+
+h1,
+h2 {
+  --r-heading-font: 'Rosewood Std Fill', Munson, Georgia,
+    serif;
+  --r-heading-line-height: 1;
+}
+
+.slide-background-content,
+.reveal-viewport {
+  background: transparent;
+}
+
+/* Fog
+ * ------------------------------------------------------------------------------ */
+
+.Fog {
+  --movement-period-1: 211s;
+  --movement-period-2: 151s;
+  --movement-period-3: 107s;
+  --opacity-period-1: 23s;
+  --opacity-period-2: 37s;
+  --opacity-period-3: 43s;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.Fog-layer {
+  --fog-width: max(2880px, 200vw);
+  position: absolute;
+  height: 100%;
+  width: var(--fog-width);
+  background: top left repeat transparent;
+}
+
+.Fog-layer--1 {
+  background-image: url(./tiling-clouds01.png);
+  @supports (
+    background-image: url(./tiling-clouds01.avif)
+  ) {
+    background-image: url(./tiling-clouds01.avif);
+  }
+  animation: Fog-layer--move var(--movement-period-1)
+      ease-in-out infinite,
+    Fog-layer--opacity01 var(--opacity-period-1)
+      ease-in-out infinite;
+}
+.Fog-layer--2 {
+  background-image: url(./tiling-clouds02.png);
+  @supports (
+    background-image: url(./tiling-clouds02.avif)
+  ) {
+    background-image: url(./tiling-clouds02.avif);
+  }
+  animation: Fog-layer--move var(--movement-period-2)
+      ease-in-out infinite,
+    Fog-layer--opacity02 var(--opacity-period-2)
+      ease-in-out infinite;
+}
+.Fog-layer--3 {
+  background-image: url(./tiling-clouds03.png);
+  @supports (
+    background-image: url(./tiling-clouds03.avif)
+  ) {
+    background-image: url(./tiling-clouds03.avif);
+  }
+  animation: Fog-layer--move var(--movement-period-3)
+      ease-in-out infinite,
+    Fog-layer--opacity03 var(--opacity-period-3)
+      ease-in-out infinite;
+}
+
+@keyframes Fog-layer--move {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(
+      calc(-0.5 * var(--fog-width))
+    );
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes Fog-layer--opacity01 {
+  0% {
+    filter: opacity(13%);
+  }
+  22% {
+    filter: opacity(23%);
+  }
+  40% {
+    filter: opacity(07%);
+  }
+  58% {
+    filter: opacity(31%);
+  }
+  80% {
+    filter: opacity(03%);
+  }
+  100% {
+    filter: opacity(13%);
+  }
+}
+@keyframes Fog-layer--opacity02 {
+  0% {
+    filter: opacity(04%);
+  }
+  25% {
+    filter: opacity(13%);
+  }
+  50% {
+    filter: opacity(19%);
+  }
+  80% {
+    filter: opacity(09%);
+  }
+  100% {
+    filter: opacity(04%);
+  }
+}
+@keyframes Fog-layer--opacity03 {
+  0% {
+    filter: opacity(05%);
+  }
+  27% {
+    filter: opacity(02%);
+  }
+  52% {
+    filter: opacity(13%);
+  }
+  68% {
+    filter: opacity(03%);
+  }
+  100% {
+    filter: opacity(05%);
+  }
+}
+
+.reduce-motion .Fog-layer,
+.no-animated-fog .Fog-layer {
+  animation: none !important;
+}
+
+.reduce-motion .Fog-layer--1,
+.no-animated-fog .Fog-layer--1 {
+  opacity: 13%;
+}
+
+.reduce-motion .Fog-layer--2,
+.no-animated-fog .Fog-layer--2 {
+  opacity: 4%;
+}
+
+.reduce-motion .Fog-layer--3,
+.no-animated-fog .Fog-layer--3 {
+  opacity: 5%;
 }
