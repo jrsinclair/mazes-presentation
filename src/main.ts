@@ -17,14 +17,8 @@ deck.initialize({
     smartypants: true,
   },
   transition: 'none',
+  backgroundTransition: 'none',
   progress: false,
+  transitionSpeed: 'fast',
+  hash: true,
 });
-
-window.deck = deck;
-
-if (import.meta.hot) {
-  import.meta.hot.accept((m) => {
-    console.log('Something updated', m);
-    // deck.sync();
-  });
-}

@@ -773,6 +773,16 @@ Note: We craft the initial state, then we build our maze and return it.
 
 ## Demo
 
+Note: And to prove that it works, let's run that code.
+
+---
+
+## Rendering
+
+Note: Now, all we've done so fare is create a list of line objects. I haven't talked at all about how we render it. But the beauty of teh web platform is that we have so many options.
+
+---
+
 ```
 ┌──┬┬───────────┐
 │╶┐╵│╶┬─┬─┬─┐╶─┐│
@@ -793,35 +803,95 @@ Note: We craft the initial state, then we build our maze and return it.
 └────────┴──┴───┘
 ```
 
-Note: And to prove that it works, let's run that code.
-
----
-
-## Rendering
-
-Note: Now, all we've done so fare is create a list of line objects. I haven't talked at all about how we render it. But the beauty of teh web platform is that we have so many options.
-
----
-
-<!-- Insert rendered maze - unicode -->
-
 Note: For example, I can create a unicode renderer and `console.log()` the output—like I do in the source code of my blog posts.
 
 ---
 
-<!-- Insert source code for text renderer -->
+```javascript
+const RENDER_MAP = {
+  NESW: '┼',
+  NES: '├',
+  NEW: '┴',
+  NSW: '┤',
+  ESW: '┬',
+  NE: '└',
+  NS: '│',
+  NW: '┘',
+  ES: '┌',
+  EW: '─',
+  SW: '┐',
+  N: '╵',
+  E: '╶',
+  S: '╷',
+  W: '╴',
+  '': '.',
+};
+
+const DIRS = [
+  ['N', NORTH],
+  ['E', EAST],
+  ['S', SOUTH],
+  ['W', WEST]
+];
+
+const xyToChar = (x, y, lines) => {
+  const pt = p(x, y);
+  const idx = DIRS
+    .map(([c, dir]) => [c, line(pt, addPoint(pt)(dir))])
+    .filter(([, line]) => lines.includes(line))
+    .map(([c]) => c)
+    .join('');
+  return RENDER_MAP[idx];
+};
+
+export function renderMazeText(n, lines): string {
+  return new Array(n)
+    .fill(undefined)
+    .map(() => new Array(n).fill(' '))
+    .map((row, y) => row.map(
+      (_, x) => xyToChar(x, y, lines.toList())).join('')
+    )
+    .join('\n');
+}
+```
 
 Note: The source code for that looks like this. I won't go into the details now.
 
 ---
 
-<!-- Insert rendered maze - svg -->
+![](/public/svg-render-16x16.svg)
 
 Note: But we can also render these as SVG.
 
 ---
 
-<!-- Insert SVG rendering code  -->
+```javascript
+function renderMazeSVG(n, squareSize, rooms) {
+  const diagSize = (n + 2) * squareSize;
+  const wStart = squareSize;
+  const wEnd = (n + 1) * squareSize;
+  const northWall = `<path d="M ${wStart} ${wStart} L ${wEnd} ${wStart}" />`;
+  const westWall = `<path d="M ${wStart} ${wStart} L ${wStart} ${wEnd}" />`;
+  const wallLines = rooms
+    .reduce((allWalls, doors, room) => {
+      const walls = [SOUTH, EAST]
+        .filter((dir) => !doors.includes(addPoint(dir)(room)))
+        .map(addPoint(room))
+        .map((adj) => [adj.x, adj.y, room.x + 1, room.y + 1])
+        .map((pts) => pts.map((pt) => (pt + 1) * squareSize))
+        .map(([ax, ay, bx, by]) => `<path d="M ${ax} ${ay} L ${bx} ${by}" />`);
+      return allWalls.push(...walls);
+    }, List())
+    .join('\n');
+  return `<svg width="${diagSize}" height="${diagSize}" viewBox="0 0 ${diagSize} ${diagSize}">
+     <g class="mazebg" stroke="currentColor" stroke-width="1">
+      ${northWall}
+      ${westWall}
+      ${wallLines}
+     </g>
+    </svg>`;
+}
+```
 
 Note: And I won't go into the details of this source code either. But it's even simpler than the text renderer.
 
@@ -834,7 +904,47 @@ Note: One final challenge I'd like to leave you with is that neither this SVG re
 ---
 
 ```javascript
-// Insert code for rending rooms in a list here
+const doorsToList = (doors: List<Point>, room: Point) => {
+  return (
+    '<ul class="door-list">' +
+    doors
+      .map((door) => {
+        const direction = directionToString.get(subtractPoint(door)(room));
+        return `<li class="door door-${direction}" ><a class="doorLink" href="#room-${door.x}-${door.y}" title="Take the ${direction} door">${direction}</a></li>`;
+      })
+      .join('\n') +
+    '</ul>'
+  );
+};
+
+const doorsDescription = (doors: List<Point>, room: Point) => {
+  const dirs = doors.map((door) => {
+    const direction = directionToString.get(subtractPoint(door)(room));
+    return direction;
+  });
+  return dirs.set(-1, (doors.size > 1 ? 'and ' : '') + dirs.get(-1)).join(', ');
+};
+
+export const roomsToList = (rooms: Map<Point, List<Point>>) => {
+  return (
+    '<ul class="room-list">' +
+    rooms
+      .sortBy((_, { x, y }) => Math.sqrt(x ** 2 + y ** 2))
+      .map(
+        (doors, room) =>
+          `<li tabindex="0" class="maze-room" id="room-${room.x}-${room.y}">
+          <p>Room ${room.x},${room.y}</p>
+          <p>${doors.size === 1 ? 'There is a door' : 'There are doors'} to the ${doorsDescription(
+            doors,
+            room,
+          )}.</p>
+          ${doorsToList(doors, room)}
+         </li>`,
+      )
+      .join('\n') +
+    '</ul>'
+  );
+};
 ```
 
 Note: One simple thing we could try is creating a list of all the rooms as HTML. It's not pretty, but it does contain all the information in the maze.
@@ -850,11 +960,115 @@ Note: Perhaps we could enhance this a little bit by adding links to adjacent roo
 ---
 
 ```css
-/* Insert CSS code here */
+/* Accessible Maze Rendering
+ * ------------------------------------------------------------------------------ */
+
+.maze-room {
+  box-sizing: border-box;
+  list-style: none;
+  margin: 0;
+  width: 28em;
+  height: 28em;
+  background-image: url('./img/dungeon-floor.png');
+  background-size: 64px 64px;
+  border-image: url('./img/dungeon-walls.png');
+  border-image-slice: 16;
+  border-image-repeat: round;
+  border-width: 64px;
+  border-image-width: 64px;
+  padding: 5em;
+  position: absolute;
+  left: -64em;
+  top: 0;
+}
+
+.room-list:not(:has(:focus)) .maze-room:first-child,
+.maze-room:focus,
+.maze-room:has(:focus) {
+  outline: none;
+  left: 0;
+}
+
+.door {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  background: url('./img/dungeon-doors.png') transparent;
+  background-size: 224px 224px;
+}
+
+.doorLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  text-indent: -99em;
+}
+
+.door-south {
+  background-position: top center;
+  height: 4em;
+  width: calc(100% - 10em);
+  bottom: 0;
+  left: 5em;
+}
+
+.door-north {
+  background-position: bottom center;
+  height: 4em;
+  width: calc(100% - 10em);
+  top: 0;
+  left: 5em;
+}
+
+.door-west {
+  background-position: center right;
+  width: 4em;
+  height: calc(100% - 10em);
+  top: 5em;
+  left: 0;
+}
+
+.door-east {
+  background-position: center left;
+  width: 4em;
+  height: calc(100% - 10em);
+  top: 5em;
+  right: 0;
+}
+
+#room-0-0::after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  top: 5em;
+  left: 0;
+  height: calc(100% - 10em);
+  width: 4em;
+  background: url('./img/dungeon-exits.png') center right no-repeat;
+  background-size: 128px 88px;
+}
+
+.maze-room:last-child::after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  top: 5em;
+  right: 0;
+  height: calc(100% - 10em);
+  width: 4em;
+  background: url('./img/dungeon-exits.png') center left no-repeat;
+  background-size: 128px 88px;
+}
 ```
 
 Note: And now that we've made the list items focusable, perhaps we could add some CSS so that we only show the first room, or whichever list item is focussed. And, while we're playing with CSS, perhaps we could position the links around the text.
 
 ---
+
+<iframe data-src="/accessible-maze" data-preload style="width: 448px; height: 448px; border: none; overflow: hidden; display: block; margin: 0 auto;"></iframe>
 
 Note: Perhaps we could throw in some pixel art… and a random object or two. And suddenly you've got a game.
