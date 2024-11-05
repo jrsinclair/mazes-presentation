@@ -144,6 +144,16 @@ h2 {
   --r-heading-line-height: 1;
 }
 
+.maze-diagram {
+  display: inline-block;
+  padding: 5px 20px 0 25px;
+  background: #fff;
+}
+
+.maze-diagram img {
+  margin-bottom: 0;
+}
+
 .slide-background-content,
 .reveal-viewport {
   background: transparent;

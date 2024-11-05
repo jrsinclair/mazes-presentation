@@ -59,49 +59,65 @@ Note: How then, do we build a maze?
 
 ---
 
-![](/grid.svg)
+<figure class="maze-diagram">
+ <img src="/grid.svg" alt="" />
+</figure>
 
 Note: We start with a grid. This one is a 4 &times; 4 grid with 16 'rooms' and 'walls' between each room.
 
 ---
 
-![Starting with a room in the middle](/starting-square.svg)
+<figure class="maze-diagram">
+ <img alt="Starting with a room in the middle" src="/starting-square.svg" />
+</figure>
 
 Note: We start by picking a room at random. I've picked one near the middle, but it could be any room in the grid.
 
 ---
 
-![Four adjoining rooms to the north, south, east, and west](/four-adjoining-rooms.svg)
+<figure class="maze-diagram">
+ <img alt="Four adjoining rooms to the north, south, east, and west" src="/four-adjoining-rooms.svg" />
+</figure>
 
 Note: Then, we make a list of the adjoining rooms to the north, south, east, and west that _aren't_ already connected to another room.
 
 ---
 
-![Join the room to the east](/join-room-north.svg)
+<figure class="maze-diagram">
+ <img alt="Join the room to the east" src="/join-room-north.svg" />
+</figure>
 
 Note: We pick one of those rooms at random, and we punch a hole through the wall connecting those two rooms.
 
 ---
 
-![Three adjoining rooms to the north, south, and east](/two-adjoining-rooms.svg)
+<figure class="maze-diagram">
+ <img alt="Three adjoining rooms to the north, south, and east" src="/two-adjoining-rooms.svg" />
+</figure>
 
 Note: Then, we repeat that process for the room we've just connected. This time, we have only three directions to choose from. This is because the room to the west is connected to this one.
 
 ---
 
-![Room with no more available adjacent rooms](/back-track-point.svg)
+<figure class="maze-diagram">
+ <img alt="Room with no more available adjacent rooms" src="/back-track-point.svg" />
+</figure>
 
 Note: And we keep doing this until we reach a room where there are no more directions to choose from. Once we get there, then we backtrack one square and start again.
 
 ---
 
-![Almost complete maze](/final-maze.svg)
+<figure class="maze-diagram">
+ <img alt="Almost complete maze" src="/final-maze.svg" />
+</figure>
 
 Note: We keep repeating this process until we have no unconnected squares left.
 
 ---
 
-![Complete maze](/final-maze-with-exits.svg)
+<figure class="maze-diagram">
+ <img alt="Complete maze" src="/final-maze-with-exits.svg" />
+</figure>
 
 Note: Once that's done, we can pick an entry and an exit.
 
@@ -859,7 +875,9 @@ Note: The source code for that looks like this. I won't go into the details now.
 
 ---
 
-![](/public/svg-render-16x16.svg)
+<figure class="maze-diagram">
+ <img alt="" src="/svg-render-16x16.svg" />
+</figure>
 
 Note: But we can also render these as SVG.
 
@@ -1070,5 +1088,6 @@ Note: And now that we've made the list items focusable, perhaps we could add som
 ---
 
 <iframe data-src="/accessible-maze" data-preload style="width: 448px; height: 448px; border: none; overflow: hidden; display: block; margin: 0 auto;"></iframe>
+<p style="margin-top: 3em"><small style="font-size: 25%">Sprites by <a href="http://www.indiedb.com/games/instant-dungeon">Scott Matott</a> used under the Open Game Art license (OGA-BY-3.0).</small></p>
 
 Note: Perhaps we could throw in some pixel art… and a random object or two. And suddenly you've got a game.
