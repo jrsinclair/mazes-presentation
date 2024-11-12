@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 import 'reveal.js/plugin/highlight/monokai.css';
 import './style.css';
+import './jrsinclair-code-blocks.css';
 
 import Reveal from 'reveal.js';
 import Markdown from 'reveal.js/plugin/markdown/markdown.esm.js';

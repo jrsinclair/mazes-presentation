@@ -5,6 +5,10 @@
             font-family: sans-serif;
         }
 
+        .axis-label {
+            font-size: 14px;
+        }
+
         .mazelines {
             fill: transparent;
         }

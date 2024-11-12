@@ -32,7 +32,7 @@
         <path d="M 75 25 L 100 25" stroke="currentColor" stroke-width="1" />
         <path d="M 75 75 L 100 75" stroke="currentColor" stroke-width="1" />
         <path d="M 100 125 L 125 125" stroke="currentColor" stroke-width="1" />
-        <!-- <path d="M 125 100 L 125 125" stroke="currentColor" stroke-width="1" /> -->
+        <path d="M 125 100 L 125 125" stroke="currentColor" stroke-width="1" />
         <path d="M 50 25 L 75 25" stroke="currentColor" stroke-width="1" />
         <path d="M 50 75 L 50 100" stroke="currentColor" stroke-width="1" />
         <path d="M 50 100 L 75 100" stroke="currentColor" stroke-width="1" />
@@ -51,6 +51,13 @@
         <path d="M 125 25 L 125 50" stroke="currentColor" stroke-width="1" />
         <path d="M 75 50 L 75 75" stroke="currentColor" stroke-width="1" />
         <path d="M 25 75 L 25 100" stroke="currentColor" stroke-width="1" />
-        <!-- <path d="M 25 25 L 25 50" stroke="currentColor" stroke-width="1" /> -->
+        <path d="M 25 25 L 25 50" stroke="currentColor" stroke-width="1" />
+        <path d="M 100 75 L 100 100" stroke="currentColor" stroke-width="1" />
+        <path d="M 100 25 L 100 50" stroke="currentColor" stroke-width="1" />
+        <path d="M 75 50 L 100 50" stroke="currentColor" stroke-width="1" />
+        <path d="M 100 50 L 125 50" stroke="currentColor" stroke-width="1" />
+        <path d="M 100 75 L 125 75" stroke="currentColor" stroke-width="1" />
+        <path d="M 100 100 L 125 100" stroke="currentColor" stroke-width="1" />
     </g>
+    <rect class="GlowySquare" x="80" y="80" height="15" width="15" />
 </svg>

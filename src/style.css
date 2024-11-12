@@ -134,6 +134,8 @@
 
 body {
   --r-main-font: 'Munson', Georgia, serif;
+  --r-code-font: 'Courier Prime', 'Courier',
+    'Courier New', monospace;
   background-color: var(--another-navy);
 }
 

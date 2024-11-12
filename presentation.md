@@ -8,15 +8,21 @@ James Sinclair
 
 ---
 
-## Make it practical
+## Why Mazes?
 
-Note: I try to be practical when I'm writing or speaking. I want to give people tools they can use to make their coding lives better. So, instead of giving examples about adding numbers together, I talk about creating DOM elements and processing JSON data. Those things are practical, and I don't want to waste people's time on things they're not going to use.
+Note: I want to start by addressing the elephant in the room. Why the heck am I talking about making mazes at a professional web development conference?
+
+---
+
+## Practical
+
+Note: I try to be practical when I'm writing or speaking. I want to give people tools they can use to make their coding lives better. So, instead of giving examples about adding numbers together, I talk about creating DOM elements and processing JSON data. Those things are practical. I don't want to waste people's time on things they're not going to use.
 
 ---
 
 ## Mazes aren't practical
 
-Note: Mazes—not so practical.  
+Note: But, mazes, they're not so practical.  
 Unless you're working in game development, it's unlikely that you're going to need a maze in your web app. So, in that sense, knowing how to build a maze is useless. You're never going to use it.
 
 ---
@@ -29,7 +35,7 @@ Note: Why am I here, then? Why bother telling you all about something you're nev
 
 ## A Goldilocks problem
 
-Note: The nice thing about generating mazes is that the problem is not too big, and not too small. An issue I often have is that people ask me for 'real world' examples. But the trouble with 'real world' examples is tha they're way more complex than you can reasonably talk about in a 25 minute presentation. But a maze is just complex enough to be interesting.
+Note: The nice thing about generating mazes is that the problem is not too big, and not too small. An issue I often have is that people ask me for 'real world' examples. But the trouble with 'real world' examples is that they're way more complex than you can reasonably talk about in a 25 minute presentation. But a maze is just complex enough to be interesting.
 
 ---
 
@@ -43,7 +49,7 @@ Note: And it's not a to do list
 
 ## Recursion
 
-Note: But we can build our maze in such a way that we'll learn about immutable data and recursion.
+Note: And we can build our maze in such a way that we'll learn about immutable data and recursion while we're at it.
 
 ---
 
@@ -84,7 +90,7 @@ Note: Then, we make a list of the adjoining rooms to the north, south, east, and
 ---
 
 <figure class="maze-diagram">
- <img alt="Join the room to the east" src="/join-room-north.svg" />
+ <img alt="Join the room to the north" src="/join-room-north-01.svg" />
 </figure>
 
 Note: We pick one of those rooms at random, and we punch a hole through the wall connecting those two rooms.
@@ -92,10 +98,90 @@ Note: We pick one of those rooms at random, and we punch a hole through the wall
 ---
 
 <figure class="maze-diagram">
- <img alt="Three adjoining rooms to the north, south, and east" src="/two-adjoining-rooms.svg" />
+ <img alt="Two adjoining rooms to the east and west" src="/two-adjoining-rooms.svg" />
 </figure>
 
-Note: Then, we repeat that process for the room we've just connected. This time, we have only three directions to choose from. This is because the room to the west is connected to this one.
+Note: Then, we repeat that process for the room we've just connected. This time, we have only two directions to choose from. This is because the room to the south is connected to this one, and we're butting up against the north edge.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Join the room to the west" src="/join-room-west.svg" />
+</figure>
+
+Note: This time we'll pick the room to the west.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Join the room to the south" src="/join-room-south-01.svg" />
+</figure>
+
+Note: Then we join the room to the south, because there's nowhere else to go.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Join the room to the south" src="/join-room-south-02.svg" />
+</figure>
+
+Note: And we keep joining rooms.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Join the room to the south" src="/join-room-south-03.svg" />
+</figure>
+
+Note: Until.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Join the room to the east" src="/join-room-east-01.svg" />
+</figure>
+
+Note: we reach a point.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Join the room to the east" src="/join-room-east-02.svg" />
+</figure>
+
+Note: Where.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Choose between options to the north and the east" src="/north-east-adjoining-rooms.svg" />
+</figure>
+
+Note: We can't.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Join room to the north" src="/join-room-north-02.svg" />
+</figure>
+
+Note: go.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Choose between options to the north, east, and west" src="/north-east-west-adjoining-rooms.svg" />
+</figure>
+
+Note: any.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Join room to the west" src="/join-room-west-02.svg" />
+</figure>
+
+Note: Further.
 
 ---
 
@@ -103,7 +189,23 @@ Note: Then, we repeat that process for the room we've just connected. This time,
  <img alt="Room with no more available adjacent rooms" src="/back-track-point.svg" />
 </figure>
 
-Note: And we keep doing this until we reach a room where there are no more directions to choose from. Once we get there, then we backtrack one square and start again.
+Note: And we reach a room where there are no more directions to choose from.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Backtrack one square" src="/back-track-one-square.svg" />
+</figure>
+
+Note: Once we get there, then we backtrack one square.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Choose between options to the north, and east" src="/north-east-adjoining-rooms-02.svg" />
+</figure>
+
+Note: And start again.
 
 ---
 
@@ -129,9 +231,9 @@ Note: Let's try and write that out in words, as an algorithm.
 
 ---
 
-1. Start with a randomly selected room. <!-- .element: class="fragment" data-fragment-index="0" -->
+1. Start with a randomly selected room and a grid of unconnected rooms. <!-- .element: class="fragment" data-fragment-index="0" -->
 2. Make a list of rooms adjacent to the current room, not yet connected to another room. <!-- .element: class="fragment" data-fragment-index="1" -->
-3. If this connected adjacent rooms list is empty, go back one room (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
+3. If this list is empty, go back one room (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
 4. Pick one of the rooms in the list at random and connect it. <!-- .element: class="fragment" data-fragment-index="3" -->
 5. Move to this new room and repeat from 2. <!-- .element: class="fragment" data-fragment-index="4" -->
 
@@ -139,8 +241,8 @@ Note: Let's try and write that out in words, as an algorithm.
 
 ## Let's turn that into code
 
-Note: We now know the basic approach. But we need ot turn that into code.  
-To make life easier for ourselves, we're going to create an immutable data structure… from scratch.
+Note: We now know the basic approach. Our next step is to turn that into code.  
+But, to make life easier for ourselves, we're going to create an immutable data structure… from scratch.
 
 ---
 
@@ -200,7 +302,7 @@ export function point(x, y) {
 }
 ```
 
-Note: It takes an x and a y coordinate, and returns as a Point object. But we're going to memoise this function. This means that if you call the function with the same inputs, you will get the _exact same_ output. Not two objects that happen to have the same values, but the same object.
+Note: It takes an x and a y coordinate, and returns as a Point object. But we still haven't achieved immutability yet. To do that, we're going to memoise this function. That is, we're going to create a cache of all the x/y values we've seen so far, and if we've already seen one we'll return the point we've already created.
 
 ---
 
@@ -209,7 +311,7 @@ Note: It takes an x and a y coordinate, and returns as a Point object. But we're
 const allPoints = new Map();
 ```
 
-Note: Ironically, we make this happen by creating a mutable Map to act as a cache.
+Note: Ironically, we make this happen by creating a mutable Map to act as our cache.
 
 ---
 
@@ -225,7 +327,7 @@ export function point(x, y) {
 }
 ```
 
-Note: So, when a new call for a point comes in, we check to see if we've already seen this pair of numbers before. If not, we'll create a new one.
+Note: So, when a new call for a point comes in, we convert the x/y pair into a string. Then we use that to check to see if we've already seen this pair of numbers before. If we have, we return the existing point. If not, we'll create a new one.
 
 ---
 
@@ -256,13 +358,13 @@ And in one sense, it doesn't matter. Whether it's called Point or Room, it still
 
 ## Why?
 
-Note: We now a helper class. And let's face it, it doesn't do much. So why do we bother? Why not just use a plain ol' JavaScript object? Zero code needed.
+Note: OK. We now have a helper class. And let's face it, it doesn't do much. So why do we bother? Why not just use a plain ol' JavaScript object? Zero code needed.
 
 ---
 
 ## ===
 
-Note: In the future, we may not need to build immutable helper classes like this. I could use immutable objects built into JavaScript. But for now, building a special class like this lets me do something plain objects can't. I can compare them using triple equals.
+Note: For now, building a special class like this lets me do something plain objects can't. I can compare them using triple equals. (This may change in future, but for now we make do with what we have).
 
 ---
 
@@ -276,7 +378,7 @@ const pointB = point(3, 5);
 pA === pB // true
 ```
 
-Note: So let's try this. I'll create an object A, and I create an object B and compare them with `===`, and I get `false`. Bu t if I use my `point()` function, and I do `===`, I get `true`.
+Note: So let's try this. I'll create an object A, and I create an object B and compare them with `===`, and I get `false`. But if I use my `point()` function, and I do `===`, I get `true`.
 
 ---
 
@@ -302,7 +404,7 @@ console.log(setWithObjects.toArray());
 
 const setWithPoints = Set([point(3, 5), point(3, 5)]);
 console.log(setWithPoints.toArray());
-// Logs: [{x: 3, y: 5}]
+// Logs: [Point ({x: 3, y: 5})]
 ```
 
 Note: If I put plain objects in the set, I get a set with two items. But if I have a Set using `point()` then I get just one. Which means I don't have to worry about there being duplicates in my set. And, as you know, that is the whole point of using a Set data structure.
@@ -311,7 +413,7 @@ Note: If I put plain objects in the set, I get a set with two items. But if I ha
 
 ## Map
 
-Note: This _also_ means that i can use points as kes in a Map() object if I want.
+Note: This _also_ means that i can use points as keys in a Map() object if I want.
 
 ---
 
@@ -339,7 +441,7 @@ console.log(mapWithPoints.toArray());
 // ]
 ```
 
-Note: Again, I'm using Immutable.js Map, but  you can use the built-in JS class just fine too. And these features will come in handy once we start coding our algorithm.
+Note: Again, I'm using Immutable.js Map, but  you can use the built-in JS class just fine too. And this is where things start to get interesting. Because using the right data structures will be crucial for our maze-building algorithm.
 
 ---
 
@@ -349,17 +451,17 @@ Note: So, let's get into writing our algorithm. We'll go over it one more time.
 
 ---
 
-1. Start with a randomly selected room. <!-- .element: class="fragment" data-fragment-index="0" -->
+1. Start with a randomly selected room and a grid. <!-- .element: class="fragment" data-fragment-index="0" -->
 2. Make a list of rooms adjacent to the current room, not yet connected to another room. <!-- .element: class="fragment" data-fragment-index="1" -->
-3. If this connected adjacent rooms list is empty, go back one room (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
+3. If this list is empty, go back one room (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
 4. Pick one of the rooms in the list at random and connect it. <!-- .element: class="fragment" data-fragment-index="3" -->
 5. Move to this new room and repeat from 2. <!-- .element: class="fragment" data-fragment-index="4" -->
 
 ---
 
-## Step 0
+## Step 1
 
-Note: But there's a step zero we need to complete first. We need a grid of unconnected rooms to start with. That is, we need to build the starting state for our algorithm. The two main things we need are:
+Note: If we're going to turn this algorithm into code. We need to set things up so we can start our algorithm in the right state. The two main things we need are:
 
 ---
 
@@ -370,7 +472,7 @@ Note: But there's a step zero we need to complete first. We need a grid of uncon
 
 ## A grid of unconnected rooms
 
-Note: To help us build that set of unconnected rooms, we're going to do a little bit of math. For now, were going to assume we're only building square mazes.
+Note: For now, were going to assume we're only building square mazes. And to help us build our set of unconnected rooms, we're going to do a little bit of math. 
 
 ---
 
@@ -382,24 +484,27 @@ Note: So the total number of rooms will be $$n^2$$. So we can create an array wi
 
 ## Building the grid
 
-Note: And we're using a Set because sets make it a fast operation to ask "Do you have a particular entry?"
+Note: So let's build our grid
 
 ---
 
 ```javascript
 import {Map, List} from 'immutable';
 
-const roomList = new Array(n ** 2).fill(undefined).map(
+const emptyArray = new Array(n ** 2).fill(undefined);
+const roomList = emptyArray.map(
   (_, i) => [point(i % n, Math.floor(i / n)), List()]
 );
 const grid = Map(roomList);
 ```
 
+Note: All we do is create an array with n^2 entries, then we map over it to create an array of pairs. The left item in each pair is a point. And the right item in the pair is an empty list. We then pass that list of pairs to the Map constructor and that creates our Map.
+
 ---
 
 ## A random room to start in
 
-Note: In our algorithm, we need to pick things at random. Like, for instance, our starting room. But in functional programming, something that's different every time you call it is considered 'impure'. So, we're going to quickly whip up our own pseudo random number generator to sidestep this problem.
+Note: In our algorithm, we need to pick things at random. Like, for instance, our starting room. But for this exercise, we're trying to work with pure functions as much as possible. And something that's different every time you call it is considered 'impure'. So, we're going to quickly whip up our own pseudo random number generator to sidestep this problem.
 
 ---
 
@@ -414,19 +519,20 @@ export function randomInt(seed) {
 }
 ```
 
-Note: This is a lot like the random number generator that most implementations of the C language use.
+Note: I won't go into the details of how this one works, but it's using prime numbers to generate a pseudo-random sequence. And this implementation is a lot like the random number generator that most implementations of the C language use.
 
 ---
 
 ```javascript
 import { randomInt } from './random';
 
-const seed = Date.now();
+// The seed can be any integer. Often, we use Date.now().
+const seed = 1093487523;
 const randomValue1 = randomInt(seed);
 const randomValue2 = randomInt(randomValue1);
 ```
 
-Note: To get random numbers, we start with a little bit of impurity by calling `Date.now()`. But, once we've called that, we can get another pseudorandom value by passing that seed to `randomInt()` again. And if I keep doing that, I can get as many pseudorandom numbers as I want. But if I give it the same starting seed, I will always get the same sequence of integers.
+Note: To get random numbers, we start with a seed. And this seed can be any integer. We pass that seed to our `randomInt()` function. And, once we've called that, we can get another pseudorandom value by passing that seed to `randomInt()` again. And if I keep doing that, I can get as many pseudorandom numbers as I want. But, if I give it the same starting seed, I will always get the same sequence of integers.
 
 ---
 
@@ -448,7 +554,8 @@ import {Set, List} from 'immutable';
 import {randomInRange} from './random.js';
 
 function buildInitialState(n, seed) {
-  const roomList = new Array(n ** 2).fill(undefined).map(
+  const emptyArray = new Array(n ** 2).fill(undefined);
+  const roomList = emptyArray.map(
     (_, i) => [point(i % n, Math.floor(i / n)), List()]
   );
   const grid = Map(roomList);
@@ -501,15 +608,15 @@ while (i > 0) {
 }
 ```
 
-Note: If you're writing a while loop, for example, that repeats something 10 times, you make darn sure you've cot some counter, `i` and that you decrement it each time around the loop. That counter `i` is the state we're changing.  
+Note: If you're writing a while loop, for example, that repeats something 10 times, you make darn sure you've got some counter, `i` and that you decrement it each time around the loop. That counter `i` is the state we're changing. The thing we need to pay attention to.  
   
-And the termination condition is built in to while loops. In this case, `i > 0`.
+And the exit condition is built in to while loops. In this case, `i > 0`.
 
 ---
 
 ## Thinking recursively
 
-Note: When we're writing recursive algorithms, we pay attention to _the exact same things_. They simply happen to live in different locations.
+Note: When we're writing recursive algorithms, we pay attention to _the same things_. They simply happen to live in different locations.
 
 ---
 
@@ -519,9 +626,9 @@ Note: For a recursive function, the state we're changing always goes into the fu
 
 ---
 
-## Check exit conditions first
+## Check exit conditions early
 
-Note: Most of the time, when we write a recursive function, the first thing we do is check the exit condition. Much like how the exit condition is the first thing you write in a for-loop.
+Note: Most of the time, when we write a recursive function, we check our exit condition as early as possible. Much like how the exit condition is the first thing you write in a for-loop.
 
 ---
 
@@ -536,9 +643,8 @@ Note: Let's apply this to our maze algorithm. What state do we update as we go t
 4. The random seed<!-- .element: class="fragment" data-fragment-index="2" -->
 
 Note: At each step, we're considering a particular room. And the room we're considering changes, so that means it's part of our state.  
-Another thing we do as we go along is we update our maze by updating the list of rooms a given room is connected to.  
-As we do that, we'll keep track of how many unconnected rooms are left. There's one final piece of state that might not  be obvious.  
-And that's our random number seed. So we'll pass that along for the next iteration of our algorithm.
+Another thing we do as we go along is we update our maze by updating the list of rooms a given room is connected to. And there's one final piece of state that might not  be obvious.  
+That's our random number seed. So we'll pass that along for the next iteration of our algorithm.
 
 ---
 
@@ -590,7 +696,7 @@ import {point, NORTH, SOUTH, EAST, WEST} from './point';
 function getCandidates(room, mazeSoFar) {
     return [NORTH, SOUTH, EAST, WEST]
         .map(addPoint(room))
-        .filter((pt) => mazeSoFar.get(pt).size === 0);
+        .filter((pt) => mazeSoFar.get(pt)?.size === 0);
 }
 ```
 
@@ -633,7 +739,7 @@ Note: So, we're supposed to go back one room. In our case, that means we'll retu
 
 ---
 
-```javascript [14-18]
+```javascript [10-15]
 // maze.js
 function buildMaze(room, mazeSoFar, seed0) {
 
@@ -680,9 +786,9 @@ Note: So, we now know which room to move on to next. So, we can connect two room
 
 ---
 
-## How do we go back one room?
+## What do we do when we get back?
 
-Note: When we call that, our algorithm is going to go off and connect a bunch of rooms in a long branch off this one. But, there's a chance that when ti comes back, there still might be unconnected rooms adjacent to this one. So we make _another_ recursive call, but pass _the same room_ to try out the remaining candidates.
+Note: When we call that, our algorithm is going to go off and connect a bunch of rooms in a long branch off this one. But, there's a chance that when it comes back, there still might be unconnected rooms adjacent to this one. So we make _another_ recursive call, but pass _the same room_ to try out the remaining candidates.
 
 ---
 
@@ -695,11 +801,11 @@ Note: However, when we call the recursive function, we need to make sure we upda
 1. The updated maze
 2. A new random seed
 
-Note: We already know which room to pass along. But this list tells us what our return value from the function needs to be. Each time we call `buildMaze()` we will need to pass back each of these three values.
+Note: We already know which room to pass along. But this list tells us what our return value from the function needs to be. Each time we call `buildMaze()` we will need to pass back each of these two values.
 
 ---
 
-```javascript [7|14-16]
+```javascript [12|18-20]
 // maze.js
 function buildMaze(room, mazeSoFar, seed0) {
   
@@ -727,7 +833,7 @@ Note: So we fill in those return values. And with those in place, we can make th
 
 ---
 
-```javascript [5,22]
+```javascript [7|22]
 // maze.js
 function buildMaze(room, mazeSoFar, seed0) {
 
@@ -767,7 +873,7 @@ Note: If we go back and sort out the other return values then that's it. We have
 
 ## Wiring it all together
 
-Note: All we need to do iw wire it up with the initial sate. We'll do that in a new function.
+Note: All we need to do is wire it up with the initial sate. We'll do that in a new function.
 
 ---
 
@@ -795,7 +901,7 @@ Note: And to prove that it works, let's run that code.
 
 ## Rendering
 
-Note: Now, all we've done so fare is create a list of line objects. I haven't talked at all about how we render it. But the beauty of teh web platform is that we have so many options.
+Note: Now, all we've done so far is create a map of point objects. I haven't talked at all about how we render it. But the beauty of the web platform is that we have so many options.
 
 ---
 
@@ -1091,3 +1197,43 @@ Note: And now that we've made the list items focusable, perhaps we could add som
 <p style="margin-top: 3em"><small style="font-size: 25%">Sprites by <a href="http://www.indiedb.com/games/instant-dungeon">Scott Matott</a> used under the Open Game Art license (OGA-BY-3.0).</small></p>
 
 Note: Perhaps we could throw in some pixel art… and a random object or two. And suddenly you've got a game.
+
+---
+
+## So what?
+
+---
+
+## Is this the most performant way to create a maze?
+
+---
+
+## No.
+
+---
+
+## Is this the most memory-efficient way to create a maze?
+
+---
+
+## No.
+
+---
+
+## Why then?
+
+Note: Two reasons.
+
+---
+
+## Because it helps you think differently
+
+Note: 1. When we created that accessible version of the maze, that led to us creating a really interesting pixel-art rendering of the maze. All because we were looking at the problem with a different lens. Programming with immutable data structures and recursion is similar: It forces you to look at the problem in a different way.
+
+---
+
+## Because it's fun
+
+Note: I called this talk the 'joy' of immutable data, recursion, and pure functions. Sometimes it's fun to just explore an idea and see where it takes you. Sometimes it's fun to create a maze, just for the heck of it. And, personally, I think with all that's going on in the world, we could use a bit more fun and joy in our lives.  
+  
+Thank you.
