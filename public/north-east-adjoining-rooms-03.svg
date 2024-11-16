@@ -1,0 +1,82 @@
+<svg viewBox="0 0 150 150" width="150" height="150" xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <style>
+        * {
+            font-family: sans-serif;
+        }
+
+        .axis-label {
+            font-size: 14px;
+        }
+
+        .walls {
+            fill: transparent;
+            stroke: currentColor;
+        }
+
+        .GlowySquare {
+            fill: #0e85c9;
+            box-shadow: 0 0 5px #0e85c9;
+        }
+
+        .DirectionChoice-line {
+            stroke: #999;
+            stroke-width: 6.25px;
+        }
+
+        .DirectionChoice-square {
+            fill: #999;
+            stroke-width: 0;
+        }
+    </style>
+    <text x="37.5" y="15" class="axis-label" text-anchor="middle">0</text>
+    <text x="62.5" y="15" class="axis-label" text-anchor="middle">1</text>
+    <text x="87.5" y="15" class="axis-label" text-anchor="middle">2</text>
+    <text x="112.5" y="15" class="axis-label" text-anchor="middle">3</text>
+    <text x="15" y="45" class="axis-label" text-anchor="end">0</text>
+    <text x="15" y="70" class="axis-label" text-anchor="end">1</text>
+    <text x="15" y="95" class="axis-label" text-anchor="end">2</text>
+    <text x="15" y="120" class="axis-label" text-anchor="end">3</text>
+    <g class="walls">
+        <rect class="OuterWall" x="25" y="25" height="100" width="100" />
+        <path class="wall" id="east-wall-1-0" d="M 75 25 L 75 50" />
+        <path class="wall" id="east-wall-2-0" d="M 100 25 L 100 50" />
+        <path class="wall" id="south-wall-2-0" d="M 75 50 L 100 50" />
+        <path class="wall" id="east-wall-3-0" d="M 125 25 L 125 50" />
+        <path class="wall" id="south-wall-3-0" d="M 100 50 L 125 50" />
+        <path class="wall" id="east-wall-0-1" d="M 50 50 L 50 75" />
+        <path class="wall" id="east-wall-1-1" d="M 75 50 L 75 75" />
+        <path class="wall" id="south-wall-1-1" d="M 50 75 L 75 75" />
+        <path class="wall" id="east-wall-2-1" d="M 100 50 L 100 75" />
+        <path class="wall" id="south-wall-2-1" d="M 75 75 L 100 75" />
+        <path class="wall" id="east-wall-3-1" d="M 125 50 L 125 75" />
+        <path class="wall" id="south-wall-3-1" d="M 100 75 L 125 75" />
+        <path class="wall" id="east-wall-0-2" d="M 50 75 L 50 100" />
+        <!-- <path class="wall" id="south-wall-0-2" d="M 25 100 L 50 100" /> -->
+        <path class="wall" id="east-wall-1-2" d="M 75 75 L 75 100" />
+        <path class="wall" id="south-wall-1-2" d="M 50 100 L 75 100" />
+        <path class="wall" id="east-wall-2-2" d="M 100 75 L 100 100" />
+        <path class="wall" id="south-wall-2-2" d="M 75 100 L 100 100" />
+        <path class="wall" id="east-wall-3-2" d="M 125 75 L 125 100" />
+        <path class="wall" id="south-wall-3-2" d="M 100 100 L 125 100" />
+        <!-- <path class="wall" id="east-wall-0-3" d="M 50 100 L 50 125" /> -->
+        <path class="wall" id="south-wall-0-3" d="M 25 125 L 50 125" />
+        <path class="wall" id="east-wall-1-3" d="M 75 100 L 75 125" />
+        <path class="wall" id="south-wall-1-3" d="M 50 125 L 75 125" />
+        <path class="wall" id="east-wall-2-3" d="M 100 100 L 100 125" />
+        <path class="wall" id="south-wall-2-3" d="M 75 125 L 100 125" />
+        <path class="wall" id="east-wall-3-3" d="M 125 100 L 125 125" />
+        <path class="wall" id="south-wall-3-3" d="M 100 125 L 125 125" />
+    </g>
+    <g class="DirectionChoices">
+        <g class="DirectionChoice DirectionChoice--north">
+            <path class="DirectionChoice-line DirectionChoice-line--north" d="M 62.5 87.5 L 62.5 112.5" />
+            <rect class="DirectionChoice-square DirectionChoice-square--north" x="55" y="80" height="15" width="15" />
+        </g>
+        <g class="DirectionChoice DirectionChoice--east">
+            <path class="DirectionChoice-line DirectionChoice-line--east" d="M 62.5 112.5 L 87.5 112.5" />
+            <rect class="DirectionChoice-square DirectionChoice-square--east" x="80" y="105" height="15" width="15" />
+        </g>
+    </g>
+    <rect class="GlowySquare" x="55" y="105" height="15" width="15" />
+</svg>

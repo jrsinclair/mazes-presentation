@@ -24,8 +24,7 @@
 }
 @font-face {
   font-family: 'Munson';
-  src: url('/fonts/munson-bold-italic.woff2')
-      format('woff2'),
+  src: url('/fonts/munson-bold-italic.woff2') format('woff2'),
     url('/fonts/munson-bold-italic.woff') format('woff');
   font-weight: 700;
   font-style: italic;
@@ -33,10 +32,8 @@
 }
 @font-face {
   font-family: 'Rosewood Std Fill';
-  src: url('/fonts/rosewoodstd-fill-regular.woff2')
-      format('woff2'),
-    url('/fonts/rosewoodstd-fill-regular.woff')
-      format('woff');
+  src: url('/fonts/rosewoodstd-fill-regular.woff2') format('woff2'),
+    url('/fonts/rosewoodstd-fill-regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -46,24 +43,21 @@
   font-family: 'Courier Prime';
   font-style: normal;
   font-weight: 400;
-  src: url('/fonts/courier-prime-regular.woff2')
-    format('woff2');
+  src: url('/fonts/courier-prime-regular.woff2') format('woff2');
 }
 @font-face {
   font-display: fallback;
   font-family: 'Courier Prime';
   font-style: italic;
   font-weight: 400;
-  src: url('/fonts/courier-prime-italic.woff2')
-    format('woff2');
+  src: url('/fonts/courier-prime-italic.woff2') format('woff2');
 }
 @font-face {
   font-display: fallback;
   font-family: 'Courier Prime';
   font-style: normal;
   font-weight: 700;
-  src: url('/fonts/courier-prime-bold.woff2')
-    format('woff2');
+  src: url('/fonts/courier-prime-bold.woff2') format('woff2');
 }
 /* courier-prime-bold-italic - latin */
 @font-face {
@@ -71,45 +65,36 @@
   font-family: 'Courier Prime';
   font-style: italic;
   font-weight: 700;
-  src: url('/fonts/courier-prime-bold-italic.woff2')
-    format('woff2');
+  src: url('/fonts/courier-prime-bold-italic.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Franklin Gothic FS';
-  src: url('/fonts/franklingothic-regular.woff2')
-      format('woff2'),
-    url('/fonts/franklingothic-regular.woff')
-      format('woff');
+  src: url('/fonts/franklingothic-regular.woff2') format('woff2'),
+    url('/fonts/franklingothic-regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Franklin Gothic FS';
-  src: url('/fonts/franklingothic-bold.woff2')
-      format('woff2'),
-    url('/fonts/franklingothic-bold.woff')
-      format('woff');
+  src: url('/fonts/franklingothic-bold.woff2') format('woff2'),
+    url('/fonts/franklingothic-bold.woff') format('woff');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Franklin Gothic FS';
-  src: url('/fonts/franklingothic-italic.woff2')
-      format('woff2'),
-    url('/fonts/franklingothic-italic.woff')
-      format('woff');
+  src: url('/fonts/franklingothic-italic.woff2') format('woff2'),
+    url('/fonts/franklingothic-italic.woff') format('woff');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: 'Franklin Gothic FS';
-  src: url('/fonts/franklingothic-bold-italic.woff2')
-      format('woff2'),
-    url('/fonts/franklingothic-bold-italic.woff')
-      format('woff');
+  src: url('/fonts/franklingothic-bold-italic.woff2') format('woff2'),
+    url('/fonts/franklingothic-bold-italic.woff') format('woff');
   font-weight: 700;
   font-style: italic;
   font-display: swap;
@@ -134,16 +119,18 @@
 
 body {
   --r-main-font: 'Munson', Georgia, serif;
-  --r-code-font: 'Courier Prime', 'Courier',
-    'Courier New', monospace;
+  --r-code-font: 'Courier Prime', 'Courier', 'Courier New', monospace;
   background-color: var(--another-navy);
 }
 
 h1,
 h2 {
-  --r-heading-font: 'Rosewood Std Fill', Munson, Georgia,
-    serif;
+  --r-heading-font: 'Rosewood Std Fill', Munson, Georgia, serif;
   --r-heading-line-height: 1;
+}
+
+.reveal a {
+  --r-link-color: #bfd9ff;
 }
 
 .maze-diagram {
@@ -154,6 +141,7 @@ h2 {
 
 .maze-diagram img {
   margin-bottom: 0;
+  width: 300px;
 }
 
 .slide-background-content,
@@ -196,39 +184,27 @@ h2 {
 
 .Fog-layer--1 {
   background-image: url(./tiling-clouds01.png);
-  @supports (
-    background-image: url(./tiling-clouds01.avif)
-  ) {
+  @supports (background-image: url(./tiling-clouds01.avif)) {
     background-image: url(./tiling-clouds01.avif);
   }
-  animation: Fog-layer--move var(--movement-period-1)
-      ease-in-out infinite,
-    Fog-layer--opacity01 var(--opacity-period-1)
-      ease-in-out infinite;
+  animation: Fog-layer--move var(--movement-period-1) ease-in-out infinite,
+    Fog-layer--opacity01 var(--opacity-period-1) ease-in-out infinite;
 }
 .Fog-layer--2 {
   background-image: url(./tiling-clouds02.png);
-  @supports (
-    background-image: url(./tiling-clouds02.avif)
-  ) {
+  @supports (background-image: url(./tiling-clouds02.avif)) {
     background-image: url(./tiling-clouds02.avif);
   }
-  animation: Fog-layer--move var(--movement-period-2)
-      ease-in-out infinite,
-    Fog-layer--opacity02 var(--opacity-period-2)
-      ease-in-out infinite;
+  animation: Fog-layer--move var(--movement-period-2) ease-in-out infinite,
+    Fog-layer--opacity02 var(--opacity-period-2) ease-in-out infinite;
 }
 .Fog-layer--3 {
   background-image: url(./tiling-clouds03.png);
-  @supports (
-    background-image: url(./tiling-clouds03.avif)
-  ) {
+  @supports (background-image: url(./tiling-clouds03.avif)) {
     background-image: url(./tiling-clouds03.avif);
   }
-  animation: Fog-layer--move var(--movement-period-3)
-      ease-in-out infinite,
-    Fog-layer--opacity03 var(--opacity-period-3)
-      ease-in-out infinite;
+  animation: Fog-layer--move var(--movement-period-3) ease-in-out infinite,
+    Fog-layer--opacity03 var(--opacity-period-3) ease-in-out infinite;
 }
 
 @keyframes Fog-layer--move {
@@ -236,9 +212,7 @@ h2 {
     transform: translateX(0);
   }
   50% {
-    transform: translateX(
-      calc(-0.5 * var(--fog-width))
-    );
+    transform: translateX(calc(-0.5 * var(--fog-width)));
   }
   100% {
     transform: translateX(0);

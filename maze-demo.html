@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Accessible Maze</title>
+    <style>
+      body {
+        text-align: center;
+        font-family: sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <form>
+      <label for="maze-size">Size:</label>
+      <input
+        id="maze-size"
+        type="range"
+        min="3"
+        max="40"
+        class="maze-input maze-input--size"
+        value="10"
+      />
+      <label for="seed">Seed:</label>
+      <input
+        id="seed"
+        type="number"
+        min="0"
+        step="1"
+        class="maze-input maze-input--seed"
+        value="42"
+      />
+    </form>
+    <div class="maze-wrapper"></div>
+    <script type="module" src="/src/demo.ts"></script>
+  </body>
+</html>

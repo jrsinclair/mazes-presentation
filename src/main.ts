@@ -22,4 +22,6 @@ deck.initialize({
   progress: false,
   transitionSpeed: 'fast',
   hash: true,
+  width: 1920,
+  height: 1080,
 });

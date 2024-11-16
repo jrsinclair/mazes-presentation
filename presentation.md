@@ -130,6 +130,12 @@ Note: And we keep joining rooms.
 ---
 
 <figure class="maze-diagram">
+ <img alt="Join the room to the south" src="/south-east-adjoining-rooms-01.svg" />
+</figure>
+
+---
+
+<figure class="maze-diagram">
  <img alt="Join the room to the south" src="/join-room-south-03.svg" />
 </figure>
 
@@ -142,6 +148,12 @@ Note: Until.
 </figure>
 
 Note: we reach a point.
+
+---
+
+<figure class="maze-diagram">
+ <img alt="Join the room to the south" src="/north-east-adjoining-rooms-03.svg" />
+</figure>
 
 ---
 
@@ -231,9 +243,9 @@ Note: Let's try and write that out in words, as an algorithm.
 
 ---
 
-1. Start with a randomly selected room and a grid of unconnected rooms. <!-- .element: class="fragment" data-fragment-index="0" -->
+1. Start with a grid of unconnected rooms and a randomly selected room. <!-- .element: class="fragment" data-fragment-index="0" -->
 2. Make a list of rooms adjacent to the current room, not yet connected to another room. <!-- .element: class="fragment" data-fragment-index="1" -->
-3. If this list is empty, go back one room (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
+3. If this list is empty, go back one room and repeat from 2 (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
 4. Pick one of the rooms in the list at random and connect it. <!-- .element: class="fragment" data-fragment-index="3" -->
 5. Move to this new room and repeat from 2. <!-- .element: class="fragment" data-fragment-index="4" -->
 
@@ -348,14 +360,6 @@ Note: While we're at it, we'll freeze the object so the runtime will stop anyone
 
 ---
 
-## Why call it Point?
-
-Note: Now, at this point, you might be wondering, why did I call this class 'Point'? Why not 'Room'? Our algorithm is about rooms, not points.  
-  
-And in one sense, it doesn't matter. Whether it's called Point or Room, it still has two numbers representing coordinates. But if we call it Point, it may be a little less confusing if we use it for other things later.
-
----
-
 ## Why?
 
 Note: OK. We now have a helper class. And let's face it, it doesn't do much. So why do we bother? Why not just use a plain ol' JavaScript object? Zero code needed.
@@ -388,32 +392,9 @@ Note: Again, you might legitimately ask, 'So what?' But things get interesting i
 
 ---
 
-## Set
-
-Note: Suppose I want to put a point into a Set. I'm going to use the Set from the venerable Immutable.js library, but it will work just fine with the built-in JavaScript Set too.
-
----
-
-```javascript [4-6|8-10]
-import { Set } from 'immutable';
-import { point } from './point';
-
-const setWithObjects = Set([{x: 3, y: 5}, {x: 3, y: 5}]);
-console.log(setWithObjects.toArray());
-// Logs: [{x: 3, y: 5}, {x: 3, y: 5}]
-
-const setWithPoints = Set([point(3, 5), point(3, 5)]);
-console.log(setWithPoints.toArray());
-// Logs: [Point ({x: 3, y: 5})]
-```
-
-Note: If I put plain objects in the set, I get a set with two items. But if I have a Set using `point()` then I get just one. Which means I don't have to worry about there being duplicates in my set. And, as you know, that is the whole point of using a Set data structure.
-
----
-
 ## Map
 
-Note: This _also_ means that i can use points as keys in a Map() object if I want.
+Note: For example, I could use these points as keys in a Map. I'm going to use the Map from the venerable Immutable.js library, but it will work just fine with the built-in JavaScript Set too.
 
 ---
 
@@ -451,9 +432,9 @@ Note: So, let's get into writing our algorithm. We'll go over it one more time.
 
 ---
 
-1. Start with a randomly selected room and a grid. <!-- .element: class="fragment" data-fragment-index="0" -->
+1. Start with a grid of unconnected rooms and a randomly selected room. <!-- .element: class="fragment" data-fragment-index="0" -->
 2. Make a list of rooms adjacent to the current room, not yet connected to another room. <!-- .element: class="fragment" data-fragment-index="1" -->
-3. If this list is empty, go back one room (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
+3. If this list is empty, go back one room and repeat from 2 (or finish). <!-- .element: class="fragment" data-fragment-index="2" -->
 4. Pick one of the rooms in the list at random and connect it. <!-- .element: class="fragment" data-fragment-index="3" -->
 5. Move to this new room and repeat from 2. <!-- .element: class="fragment" data-fragment-index="4" -->
 
@@ -478,7 +459,13 @@ Note: For now, were going to assume we're only building square mazes. And to hel
 
 $$ n ^ 2 $$
 
-Note: So the total number of rooms will be $$n^2$$. So we can create an array with $$n^2$$ entries, and map over it to create a Map. This Map will have points as keys, and each value for the map will be a List of rooms it's connected to.
+Note: So the total number of rooms will be $$n^2$$. So we can create an array with $$n^2$$ entries, and map over it to create a Map.
+
+---
+
+## Point → List<Point>
+
+Note: This (immutable) Map will have points as keys, and each value for the map will be a List of rooms it's connected to.
 
 ---
 
@@ -548,7 +535,7 @@ Note: For our purposes though, we' mostly want a random number in a range betwee
 
 ---
 
-```javascript
+```javascript [1-16|6-10|12-14|15]
 // maze.js
 import {Set, List} from 'immutable';
 import {randomInRange} from './random.js';
@@ -579,7 +566,7 @@ Note: We're ready to code our actual algorithm. Now, we're going to do this usin
 
 ## Scary
 
-Note: People think it's scary. And often they think it's scary because it's easy to get yourself into a situation where you have infinite recursion. And that's fair. I undersand that.
+Note: People think it's scary. And often they think it's scary because it's easy to get yourself into a situation where you have infinite recursion. And that's fair. I understand that.
 
 ---
 
@@ -895,6 +882,8 @@ Note: We craft the initial state, then we build our maze and return it.
 
 ## Demo
 
+<iframe data-src="/maze-demo" data-preload style="width: 1080px; height: 667px; border: none; overflow: hidden; display: block; margin: 0 auto;"></iframe>
+
 Note: And to prove that it works, let's run that code.
 
 ---
@@ -905,7 +894,7 @@ Note: Now, all we've done so far is create a map of point objects. I haven't tal
 
 ---
 
-```
+```text
 ┌──┬┬───────────┐
 │╶┐╵│╶┬─┬─┬─┐╶─┐│
 │╷├╴├╴│╷│╷╵╷└─┐└┤
@@ -929,95 +918,11 @@ Note: For example, I can create a unicode renderer and `console.log()` the outpu
 
 ---
 
-```javascript
-const RENDER_MAP = {
-  NESW: '┼',
-  NES: '├',
-  NEW: '┴',
-  NSW: '┤',
-  ESW: '┬',
-  NE: '└',
-  NS: '│',
-  NW: '┘',
-  ES: '┌',
-  EW: '─',
-  SW: '┐',
-  N: '╵',
-  E: '╶',
-  S: '╷',
-  W: '╴',
-  '': '.',
-};
-
-const DIRS = [
-  ['N', NORTH],
-  ['E', EAST],
-  ['S', SOUTH],
-  ['W', WEST]
-];
-
-const xyToChar = (x, y, lines) => {
-  const pt = p(x, y);
-  const idx = DIRS
-    .map(([c, dir]) => [c, line(pt, addPoint(pt)(dir))])
-    .filter(([, line]) => lines.includes(line))
-    .map(([c]) => c)
-    .join('');
-  return RENDER_MAP[idx];
-};
-
-export function renderMazeText(n, lines): string {
-  return new Array(n)
-    .fill(undefined)
-    .map(() => new Array(n).fill(' '))
-    .map((row, y) => row.map(
-      (_, x) => xyToChar(x, y, lines.toList())).join('')
-    )
-    .join('\n');
-}
-```
-
-Note: The source code for that looks like this. I won't go into the details now.
-
----
-
 <figure class="maze-diagram">
  <img alt="" src="/svg-render-16x16.svg" />
 </figure>
 
 Note: But we can also render these as SVG.
-
----
-
-```javascript
-function renderMazeSVG(n, squareSize, rooms) {
-  const diagSize = (n + 2) * squareSize;
-  const wStart = squareSize;
-  const wEnd = (n + 1) * squareSize;
-  const northWall = `<path d="M ${wStart} ${wStart} L ${wEnd} ${wStart}" />`;
-  const westWall = `<path d="M ${wStart} ${wStart} L ${wStart} ${wEnd}" />`;
-  const wallLines = rooms
-    .reduce((allWalls, doors, room) => {
-      const walls = [SOUTH, EAST]
-        .filter((dir) => !doors.includes(addPoint(dir)(room)))
-        .map(addPoint(room))
-        .map((adj) => [adj.x, adj.y, room.x + 1, room.y + 1])
-        .map((pts) => pts.map((pt) => (pt + 1) * squareSize))
-        .map(([ax, ay, bx, by]) => `<path d="M ${ax} ${ay} L ${bx} ${by}" />`);
-      return allWalls.push(...walls);
-    }, List())
-    .join('\n');
-  return `<svg width="${diagSize}" height="${diagSize}" viewBox="0 0 ${diagSize} ${diagSize}">
-     <g class="mazebg" stroke="currentColor" stroke-width="1">
-      ${northWall}
-      ${westWall}
-      ${wallLines}
-     </g>
-    </svg>`;
-}
-```
-
-Note: And I won't go into the details of this source code either. But it's even simpler than the text renderer.
 
 ---
 
@@ -1028,19 +933,6 @@ Note: One final challenge I'd like to leave you with is that neither this SVG re
 ---
 
 ```javascript
-const doorsToList = (doors: List<Point>, room: Point) => {
-  return (
-    '<ul class="door-list">' +
-    doors
-      .map((door) => {
-        const direction = directionToString.get(subtractPoint(door)(room));
-        return `<li class="door door-${direction}" ><a class="doorLink" href="#room-${door.x}-${door.y}" title="Take the ${direction} door">${direction}</a></li>`;
-      })
-      .join('\n') +
-    '</ul>'
-  );
-};
-
 const doorsDescription = (doors: List<Point>, room: Point) => {
   const dirs = doors.map((door) => {
     const direction = directionToString.get(subtractPoint(door)(room));
@@ -1062,7 +954,6 @@ export const roomsToList = (rooms: Map<Point, List<Point>>) => {
             doors,
             room,
           )}.</p>
-          ${doorsToList(doors, room)}
          </li>`,
       )
       .join('\n') +
@@ -1075,11 +966,4125 @@ Note: One simple thing we could try is creating a list of all the rooms as HTML.
 
 ---
 
-```javascript
-// Insert code for adding links to adjacent rooms here
+```html
+<div class="accessibleMaze">
+  <ul class="room-list">
+    <li tabindex="0" class="maze-room" id="room-0-0">
+      <p>Room 0,0</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-0">
+      <p>Room 1,0</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-1">
+      <p>Room 0,1</p>
+      <p>There are doors to the east, north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-1">
+      <p>Room 1,1</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-2">
+      <p>Room 0,2</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-0">
+      <p>Room 2,0</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-2">
+      <p>Room 1,2</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-1">
+      <p>Room 2,1</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-2">
+      <p>Room 2,2</p>
+      <p>There is a door to the east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-0">
+      <p>Room 3,0</p>
+      <p>There is a door to the south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-3">
+      <p>Room 0,3</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-3">
+      <p>Room 1,3</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-1">
+      <p>Room 3,1</p>
+      <p>There are doors to the west, north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-2">
+      <p>Room 3,2</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-3">
+      <p>Room 2,3</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-4">
+      <p>Room 0,4</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-0">
+      <p>Room 4,0</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-4">
+      <p>Room 1,4</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-1">
+      <p>Room 4,1</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-3">
+      <p>Room 3,3</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-4">
+      <p>Room 2,4</p>
+      <p>There is a door to the south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-2">
+      <p>Room 4,2</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-4">
+      <p>Room 3,4</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-0">
+      <p>Room 5,0</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-5">
+      <p>Room 0,5</p>
+      <p>There is a door to the south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-3">
+      <p>Room 4,3</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-5">
+      <p>Room 1,5</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-1">
+      <p>Room 5,1</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-2">
+      <p>Room 5,2</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-5">
+      <p>Room 2,5</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-4">
+      <p>Room 4,4</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-5">
+      <p>Room 3,5</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-3">
+      <p>Room 5,3</p>
+      <p>There is a door to the east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-6">
+      <p>Room 0,6</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-0">
+      <p>Room 6,0</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-6">
+      <p>Room 1,6</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-1">
+      <p>Room 6,1</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-6">
+      <p>Room 2,6</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-2">
+      <p>Room 6,2</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-4">
+      <p>Room 5,4</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-5">
+      <p>Room 4,5</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-6">
+      <p>Room 3,6</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-3">
+      <p>Room 6,3</p>
+      <p>There are doors to the south, north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-0">
+      <p>Room 7,0</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-7">
+      <p>Room 0,7</p>
+      <p>There are doors to the south, north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-7">
+      <p>Room 1,7</p>
+      <p>There is a door to the west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-5">
+      <p>Room 5,5</p>
+      <p>There are doors to the east, north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-1">
+      <p>Room 7,1</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-6">
+      <p>Room 4,6</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-4">
+      <p>Room 6,4</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-2">
+      <p>Room 7,2</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-7">
+      <p>Room 2,7</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-7">
+      <p>Room 3,7</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-3">
+      <p>Room 7,3</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-6">
+      <p>Room 5,6</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-5">
+      <p>Room 6,5</p>
+      <p>There are doors to the east, south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-0">
+      <p>Room 8,0</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-8">
+      <p>Room 0,8</p>
+      <p>There are doors to the east, north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-8">
+      <p>Room 1,8</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-4">
+      <p>Room 7,4</p>
+      <p>There is a door to the north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-7">
+      <p>Room 4,7</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-1">
+      <p>Room 8,1</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-8">
+      <p>Room 2,8</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-2">
+      <p>Room 8,2</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-6">
+      <p>Room 6,6</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-8">
+      <p>Room 3,8</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-3">
+      <p>Room 8,3</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-7">
+      <p>Room 5,7</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-5">
+      <p>Room 7,5</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-8">
+      <p>Room 4,8</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-4">
+      <p>Room 8,4</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-0">
+      <p>Room 9,0</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-9">
+      <p>Room 0,9</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-9">
+      <p>Room 1,9</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-1">
+      <p>Room 9,1</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-6">
+      <p>Room 7,6</p>
+      <p>There is a door to the west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-2">
+      <p>Room 9,2</p>
+      <p>There are doors to the north, east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-9">
+      <p>Room 2,9</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-7">
+      <p>Room 6,7</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-8">
+      <p>Room 5,8</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-5">
+      <p>Room 8,5</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-9">
+      <p>Room 3,9</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-3">
+      <p>Room 9,3</p>
+      <p>There is a door to the north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-4">
+      <p>Room 9,4</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-9">
+      <p>Room 4,9</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-7">
+      <p>Room 7,7</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-10">
+      <p>Room 0,10</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-8">
+      <p>Room 6,8</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-6">
+      <p>Room 8,6</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-0">
+      <p>Room 10,0</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-10">
+      <p>Room 1,10</p>
+      <p>There is a door to the south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-1">
+      <p>Room 10,1</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-10">
+      <p>Room 2,10</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-2">
+      <p>Room 10,2</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-9">
+      <p>Room 5,9</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-5">
+      <p>Room 9,5</p>
+      <p>There are doors to the south, east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-10">
+      <p>Room 3,10</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-3">
+      <p>Room 10,3</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-8">
+      <p>Room 7,8</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-7">
+      <p>Room 8,7</p>
+      <p>There are doors to the east, south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-10">
+      <p>Room 4,10</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-4">
+      <p>Room 10,4</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-6">
+      <p>Room 9,6</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-9">
+      <p>Room 6,9</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-0">
+      <p>Room 11,0</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-11">
+      <p>Room 0,11</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-11">
+      <p>Room 1,11</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-1">
+      <p>Room 11,1</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-10">
+      <p>Room 5,10</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-2">
+      <p>Room 11,2</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-11">
+      <p>Room 2,11</p>
+      <p>There are doors to the north, west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-5">
+      <p>Room 10,5</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-8">
+      <p>Room 8,8</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-11">
+      <p>Room 3,11</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-9">
+      <p>Room 7,9</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-7">
+      <p>Room 9,7</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-3">
+      <p>Room 11,3</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-10">
+      <p>Room 6,10</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-6">
+      <p>Room 10,6</p>
+      <p>There is a door to the north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-4">
+      <p>Room 11,4</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-11">
+      <p>Room 4,11</p>
+      <p>There is a door to the south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-12">
+      <p>Room 0,12</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-0">
+      <p>Room 12,0</p>
+      <p>There are doors to the south, west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-12">
+      <p>Room 1,12</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-8">
+      <p>Room 9,8</p>
+      <p>There is a door to the south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-9">
+      <p>Room 8,9</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-1">
+      <p>Room 12,1</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-11">
+      <p>Room 5,11</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-5">
+      <p>Room 11,5</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-12">
+      <p>Room 2,12</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-2">
+      <p>Room 12,2</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-10">
+      <p>Room 7,10</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-7">
+      <p>Room 10,7</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-12">
+      <p>Room 3,12</p>
+      <p>There are doors to the north, west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-3">
+      <p>Room 12,3</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-6">
+      <p>Room 11,6</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-11">
+      <p>Room 6,11</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-12">
+      <p>Room 4,12</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-4">
+      <p>Room 12,4</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-9">
+      <p>Room 9,9</p>
+      <p>There are doors to the south, north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-10">
+      <p>Room 8,10</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-8">
+      <p>Room 10,8</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-12">
+      <p>Room 5,12</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-0">
+      <p>Room 13,0</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-13">
+      <p>Room 0,13</p>
+      <p>There is a door to the south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-5">
+      <p>Room 12,5</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-13">
+      <p>Room 1,13</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-11">
+      <p>Room 7,11</p>
+      <p>There are doors to the south, east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-7">
+      <p>Room 11,7</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-1">
+      <p>Room 13,1</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-2">
+      <p>Room 13,2</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-13">
+      <p>Room 2,13</p>
+      <p>There is a door to the north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-13">
+      <p>Room 3,13</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-3">
+      <p>Room 13,3</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-12">
+      <p>Room 6,12</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-6">
+      <p>Room 12,6</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-10">
+      <p>Room 9,10</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-9">
+      <p>Room 10,9</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-8">
+      <p>Room 11,8</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-4">
+      <p>Room 13,4</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-13">
+      <p>Room 4,13</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-11">
+      <p>Room 8,11</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-12">
+      <p>Room 7,12</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-7">
+      <p>Room 12,7</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-13">
+      <p>Room 5,13</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-5">
+      <p>Room 13,5</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-14">
+      <p>Room 0,14</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-0">
+      <p>Room 14,0</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-14">
+      <p>Room 1,14</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-1">
+      <p>Room 14,1</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-14">
+      <p>Room 2,14</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-10">
+      <p>Room 10,10</p>
+      <p>There is a door to the north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-2">
+      <p>Room 14,2</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-11">
+      <p>Room 9,11</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-9">
+      <p>Room 11,9</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-14">
+      <p>Room 3,14</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-6">
+      <p>Room 13,6</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-13">
+      <p>Room 6,13</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-3">
+      <p>Room 14,3</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-12">
+      <p>Room 8,12</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-8">
+      <p>Room 12,8</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-14">
+      <p>Room 4,14</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-4">
+      <p>Room 14,4</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-13">
+      <p>Room 7,13</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-7">
+      <p>Room 13,7</p>
+      <p>There is a door to the east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-14">
+      <p>Room 5,14</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-10">
+      <p>Room 11,10</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-11">
+      <p>Room 10,11</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-5">
+      <p>Room 14,5</p>
+      <p>There is a door to the east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-12">
+      <p>Room 9,12</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-0">
+      <p>Room 15,0</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-15">
+      <p>Room 0,15</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-9">
+      <p>Room 12,9</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-1">
+      <p>Room 15,1</p>
+      <p>There is a door to the north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-15">
+      <p>Room 1,15</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-2">
+      <p>Room 15,2</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-15">
+      <p>Room 2,15</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-14">
+      <p>Room 6,14</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-6">
+      <p>Room 14,6</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-8">
+      <p>Room 13,8</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-13">
+      <p>Room 8,13</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-3">
+      <p>Room 15,3</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-15">
+      <p>Room 3,15</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-4">
+      <p>Room 15,4</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-15">
+      <p>Room 4,15</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-11">
+      <p>Room 11,11</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-12">
+      <p>Room 10,12</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-10">
+      <p>Room 12,10</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-14">
+      <p>Room 7,14</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-7">
+      <p>Room 14,7</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-5">
+      <p>Room 15,5</p>
+      <p>There are doors to the south, west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-15">
+      <p>Room 5,15</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-13">
+      <p>Room 9,13</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-9">
+      <p>Room 13,9</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-14">
+      <p>Room 8,14</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-8">
+      <p>Room 14,8</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-6">
+      <p>Room 15,6</p>
+      <p>There are doors to the west, south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-15">
+      <p>Room 6,15</p>
+      <p>There are doors to the north, west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-12">
+      <p>Room 11,12</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-11">
+      <p>Room 12,11</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-10">
+      <p>Room 13,10</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-13">
+      <p>Room 10,13</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-7">
+      <p>Room 15,7</p>
+      <p>There are doors to the north, west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-15">
+      <p>Room 7,15</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-14">
+      <p>Room 9,14</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-9">
+      <p>Room 14,9</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-12">
+      <p>Room 12,12</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-8">
+      <p>Room 15,8</p>
+      <p>There are doors to the north, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-15">
+      <p>Room 8,15</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-13">
+      <p>Room 11,13</p>
+      <p>There are doors to the south, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-11">
+      <p>Room 13,11</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-14">
+      <p>Room 10,14</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-10">
+      <p>Room 14,10</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-9">
+      <p>Room 15,9</p>
+      <p>There is a door to the north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-15">
+      <p>Room 9,15</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-12">
+      <p>Room 13,12</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-13">
+      <p>Room 12,13</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-14">
+      <p>Room 11,14</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-11">
+      <p>Room 14,11</p>
+      <p>There are doors to the east, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-10">
+      <p>Room 15,10</p>
+      <p>There is a door to the south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-15">
+      <p>Room 10,15</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-13">
+      <p>Room 13,13</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-14">
+      <p>Room 12,14</p>
+      <p>There are doors to the east, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-12">
+      <p>Room 14,12</p>
+      <p>There are doors to the south, west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-11">
+      <p>Room 15,11</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-15">
+      <p>Room 11,15</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-14">
+      <p>Room 13,14</p>
+      <p>There are doors to the north, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-13">
+      <p>Room 14,13</p>
+      <p>There are doors to the south, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-12">
+      <p>Room 15,12</p>
+      <p>There are doors to the west, and south.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-15">
+      <p>Room 12,15</p>
+      <p>There are doors to the north, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-14">
+      <p>Room 14,14</p>
+      <p>There are doors to the east, and north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-13">
+      <p>Room 15,13</p>
+      <p>There is a door to the north.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-15">
+      <p>Room 13,15</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-14">
+      <p>Room 15,14</p>
+      <p>There are doors to the south, and west.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-15">
+      <p>Room 14,15</p>
+      <p>There are doors to the west, and east.</p>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-15">
+      <p>Room 15,15</p>
+      <p>There are doors to the west, and north.</p>
+    </li>
+  </ul>
+</div>
 ```
 
 Note: Perhaps we could enhance this a little bit by adding links to adjacent rooms. That way, you could navigate through the list using your keyboard.
+
+---
+
+<iframe data-src="/accessible-maze-boring" style="width: 1080px; height: 667px; border: none; overflow: hidden; display: block; margin: 0 auto;"></iframe>
+
+---
+
+```html
+<div class="accessibleMaze">
+  <ul class="room-list">
+    <li tabindex="0" class="maze-room" id="room-0-0">
+      <p>Room 0,0</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-1" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-1-0" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-0">
+      <p>Room 1,0</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-0-0" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-2-0" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-1">
+      <p>Room 0,1</p>
+      <p>There are doors to the east, north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-1-1" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-0" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-2" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-1">
+      <p>Room 1,1</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-1-2" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-0-1" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-2">
+      <p>Room 0,2</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-1" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-3" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-0">
+      <p>Room 2,0</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-1-0" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-2-1" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-2">
+      <p>Room 1,2</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-1-3" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-1-1" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-1">
+      <p>Room 2,1</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-2-0" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-1" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-2">
+      <p>Room 2,2</p>
+      <p>There is a door to the east.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-2" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-0">
+      <p>Room 3,0</p>
+      <p>There is a door to the south.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-3-1" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-3">
+      <p>Room 0,3</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-2" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-4" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-3">
+      <p>Room 1,3</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-2-3" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-1-2" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-1">
+      <p>Room 3,1</p>
+      <p>There are doors to the west, north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-1" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-3-0" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-3-2" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-2">
+      <p>Room 3,2</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-3-1" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-2" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-3">
+      <p>Room 2,3</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-3" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-1-3" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-4">
+      <p>Room 0,4</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-3" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-1-4" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-0">
+      <p>Room 4,0</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-5-0" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-4-1" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-4">
+      <p>Room 1,4</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-0-4" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-1-5" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-1">
+      <p>Room 4,1</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-4-0" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-5-1" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-3">
+      <p>Room 3,3</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-3-4" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-3" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-4">
+      <p>Room 2,4</p>
+      <p>There is a door to the south.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-2-5" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-2">
+      <p>Room 4,2</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-5-2" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-4-3" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-4">
+      <p>Room 3,4</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-4-4" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-3-3" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-0">
+      <p>Room 5,0</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-0" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-4-0" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-5">
+      <p>Room 0,5</p>
+      <p>There is a door to the south.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-6" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-3">
+      <p>Room 4,3</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-4-2" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-4-4" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-5">
+      <p>Room 1,5</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-1-4" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-1-6" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-1">
+      <p>Room 5,1</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-4-1" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-5-2" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-2">
+      <p>Room 5,2</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-5-1" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-4-2" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-5">
+      <p>Room 2,5</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-5" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-2-4" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-4">
+      <p>Room 4,4</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-4-3" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-3-4" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-5">
+      <p>Room 3,5</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-4-5" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-5" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-3">
+      <p>Room 5,3</p>
+      <p>There is a door to the east.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-3" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-6">
+      <p>Room 0,6</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-7" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-5" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-0">
+      <p>Room 6,0</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-0" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-0" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-6">
+      <p>Room 1,6</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-1-5" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-2-6" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-1">
+      <p>Room 6,1</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-6-2" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-1" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-6">
+      <p>Room 2,6</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-1-6" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-6" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-2">
+      <p>Room 6,2</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-6-3" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-6-1" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-4">
+      <p>Room 5,4</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-5-5" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-4" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-5">
+      <p>Room 4,5</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-5-5" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-3-5" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-6">
+      <p>Room 3,6</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-6" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-3-7" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-3">
+      <p>Room 6,3</p>
+      <p>There are doors to the south, north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-6-4" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-6-2" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-3" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-0">
+      <p>Room 7,0</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-8-0" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-0" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-7">
+      <p>Room 0,7</p>
+      <p>There are doors to the south, north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-8" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-6" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-1-7" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-7">
+      <p>Room 1,7</p>
+      <p>There is a door to the west.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-0-7" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-5">
+      <p>Room 5,5</p>
+      <p>There are doors to the east, north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-5" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-5-4" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-4-5" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-1">
+      <p>Room 7,1</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-1" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-7-2" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-6">
+      <p>Room 4,6</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-4-7" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-5-6" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-4">
+      <p>Room 6,4</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-4" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-6-3" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-2">
+      <p>Room 7,2</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-7-1" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-7-3" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-7">
+      <p>Room 2,7</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-7" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-2-8" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-7">
+      <p>Room 3,7</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-3-6" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-7" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-3">
+      <p>Room 7,3</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-7-2" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-7-4" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-6">
+      <p>Room 5,6</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-4-6" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-5-7" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-5">
+      <p>Room 6,5</p>
+      <p>There are doors to the east, south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-5" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-6-6" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-5" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-0">
+      <p>Room 8,0</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-0" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-7-0" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-8">
+      <p>Room 0,8</p>
+      <p>There are doors to the east, north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-1-8" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-7" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-9" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-8">
+      <p>Room 1,8</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-1-9" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-0-8" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-4">
+      <p>Room 7,4</p>
+      <p>There is a door to the north.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-7-3" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-7">
+      <p>Room 4,7</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-4-8" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-4-6" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-1">
+      <p>Room 8,1</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-8-2" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-1" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-8">
+      <p>Room 2,8</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-2-7" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-8" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-2">
+      <p>Room 8,2</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-8-3" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-8-1" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-6">
+      <p>Room 6,6</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-6-5" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-6" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-8">
+      <p>Room 3,8</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-8" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-4-8" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-3">
+      <p>Room 8,3</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-8-4" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-8-2" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-7">
+      <p>Room 5,7</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-5-6" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-7" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-5">
+      <p>Room 7,5</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-8-5" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-5" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-8">
+      <p>Room 4,8</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-3-8" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-4-7" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-4">
+      <p>Room 8,4</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-4" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-8-3" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-0">
+      <p>Room 9,0</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-10-0" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-0" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-9">
+      <p>Room 0,9</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-8" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-10" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-9">
+      <p>Room 1,9</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-2-9" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-1-8" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-1">
+      <p>Room 9,1</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-1" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-9-2" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-6">
+      <p>Room 7,6</p>
+      <p>There is a door to the west.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-6" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-2">
+      <p>Room 9,2</p>
+      <p>There are doors to the north, east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-9-1" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-10-2" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-9-3" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-9">
+      <p>Room 2,9</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-9" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-1-9" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-7">
+      <p>Room 6,7</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-7" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-7" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-8">
+      <p>Room 5,8</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-8" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-5-9" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-5">
+      <p>Room 8,5</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-5" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-7-5" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-9">
+      <p>Room 3,9</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-4-9" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-9" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-3">
+      <p>Room 9,3</p>
+      <p>There is a door to the north.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-9-2" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-4">
+      <p>Room 9,4</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-10-4" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-4" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-9">
+      <p>Room 4,9</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-5-9" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-3-9" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-7">
+      <p>Room 7,7</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-7" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-7-8" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-10">
+      <p>Room 0,10</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-9" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-11" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-8">
+      <p>Room 6,8</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-6-9" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-8" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-6">
+      <p>Room 8,6</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-8-7" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-6" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-0">
+      <p>Room 10,0</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-11-0" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-9-0" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-10">
+      <p>Room 1,10</p>
+      <p>There is a door to the south.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-1-11" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-1">
+      <p>Room 10,1</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-10-2" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-11-1" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-10">
+      <p>Room 2,10</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-10" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-2-11" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-2">
+      <p>Room 10,2</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-9-2" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-10-1" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-9">
+      <p>Room 5,9</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-5-8" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-4-9" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-5">
+      <p>Room 9,5</p>
+      <p>There are doors to the south, east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-9-6" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-10-5" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-5" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-10">
+      <p>Room 3,10</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-4-10" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-10" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-3">
+      <p>Room 10,3</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-11-3" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-10-4" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-8">
+      <p>Room 7,8</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-7-7" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-7-9" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-7">
+      <p>Room 8,7</p>
+      <p>There are doors to the east, south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-7" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-8-8" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-8-6" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-10">
+      <p>Room 4,10</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-5-10" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-3-10" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-4">
+      <p>Room 10,4</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-10-3" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-9-4" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-6">
+      <p>Room 9,6</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-6" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-9-5" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-9">
+      <p>Room 6,9</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-6-10" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-6-8" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-0">
+      <p>Room 11,0</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-0" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-10-0" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-11">
+      <p>Room 0,11</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-10" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-12" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-11">
+      <p>Room 1,11</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-2-11" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-1-10" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-1">
+      <p>Room 11,1</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-10-1" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-11-2" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-10">
+      <p>Room 5,10</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-5-11" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-4-10" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-2">
+      <p>Room 11,2</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-11-1" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-2" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-11">
+      <p>Room 2,11</p>
+      <p>There are doors to the north, west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-2-10" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-1-11" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-11" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-5">
+      <p>Room 10,5</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-9-5" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-10-6" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-8">
+      <p>Room 8,8</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-8-7" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-8-9" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-11">
+      <p>Room 3,11</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-11" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-3-12" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-9">
+      <p>Room 7,9</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-7-8" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-7-10" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-7">
+      <p>Room 9,7</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-10-7" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-7" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-3">
+      <p>Room 11,3</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-3" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-10-3" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-10">
+      <p>Room 6,10</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-10" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-6-9" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-6">
+      <p>Room 10,6</p>
+      <p>There is a door to the north.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-10-5" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-4">
+      <p>Room 11,4</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-11-5" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-4" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-11">
+      <p>Room 4,11</p>
+      <p>There is a door to the south.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-4-12" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-12">
+      <p>Room 0,12</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-11" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-1-12" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-0">
+      <p>Room 12,0</p>
+      <p>There are doors to the south, west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-12-1" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-0" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-13-0" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-12">
+      <p>Room 1,12</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-0-12" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-1-13" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-8">
+      <p>Room 9,8</p>
+      <p>There is a door to the south.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-9-9" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-9">
+      <p>Room 8,9</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-8-8" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-8-10" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-1">
+      <p>Room 12,1</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-13-1" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-12-0" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-11">
+      <p>Room 5,11</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-11" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-5-10" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-5">
+      <p>Room 11,5</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-5" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-11-4" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-12">
+      <p>Room 2,12</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-12" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-2-13" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-2">
+      <p>Room 12,2</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-2" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-13-2" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-10">
+      <p>Room 7,10</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-7-9" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-10" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-7">
+      <p>Room 10,7</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-10-8" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-9-7" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-12">
+      <p>Room 3,12</p>
+      <p>There are doors to the north, west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-3-11" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-12" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-4-12" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-3">
+      <p>Room 12,3</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-12-4" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-3" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-6">
+      <p>Room 11,6</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-11-7" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-6" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-11">
+      <p>Room 6,11</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-11" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-11" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-12">
+      <p>Room 4,12</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-3-12" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-4-11" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-4">
+      <p>Room 12,4</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-4" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-12-3" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-9">
+      <p>Room 9,9</p>
+      <p>There are doors to the south, north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-9-10" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-9-8" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-10-9" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-10">
+      <p>Room 8,10</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-8-9" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-10" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-8">
+      <p>Room 10,8</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-11-8" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-10-7" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-12">
+      <p>Room 5,12</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-5-13" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-12" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-0">
+      <p>Room 13,0</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-12-0" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-0" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-13">
+      <p>Room 0,13</p>
+      <p>There is a door to the south.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-14" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-5">
+      <p>Room 12,5</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-12-6" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-5" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-13">
+      <p>Room 1,13</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-1-12" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-1-14" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-11">
+      <p>Room 7,11</p>
+      <p>There are doors to the south, east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-7-12" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-8-11" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-11" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-7">
+      <p>Room 11,7</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-7" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-11-6" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-1">
+      <p>Room 13,1</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-1" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-12-1" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-2">
+      <p>Room 13,2</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-12-2" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-13-3" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-13">
+      <p>Room 2,13</p>
+      <p>There is a door to the north.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-2-12" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-13">
+      <p>Room 3,13</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-3-14" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-4-13" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-3">
+      <p>Room 13,3</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-13-2" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-3" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-12">
+      <p>Room 6,12</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-12" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-12" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-6">
+      <p>Room 12,6</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-6" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-12-5" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-10">
+      <p>Room 9,10</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-10" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-9-9" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-9">
+      <p>Room 10,9</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-9-9" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-10-10" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-8">
+      <p>Room 11,8</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-11-9" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-10-8" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-4">
+      <p>Room 13,4</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-4" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-13-5" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-13">
+      <p>Room 4,13</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-3-13" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-4-14" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-11">
+      <p>Room 8,11</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-7-11" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-11" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-12">
+      <p>Room 7,12</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-12" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-7-11" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-7">
+      <p>Room 12,7</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-12-8" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-7" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-13">
+      <p>Room 5,13</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-13" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-5-12" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-5">
+      <p>Room 13,5</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-13-4" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-13-6" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-14">
+      <p>Room 0,14</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-0-15" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-13" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-0">
+      <p>Room 14,0</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-0" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-15-0" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-14">
+      <p>Room 1,14</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-1-13" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-2-14" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-1">
+      <p>Room 14,1</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-14-2" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-1" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-14">
+      <p>Room 2,14</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-1-14" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-14" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-10">
+      <p>Room 10,10</p>
+      <p>There is a door to the north.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-10-9" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-2">
+      <p>Room 14,2</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-15-2" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-14-1" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-11">
+      <p>Room 9,11</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-11" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-9-12" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-9">
+      <p>Room 11,9</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-11-10" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-11-8" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-14">
+      <p>Room 3,14</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-14" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-3-13" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-6">
+      <p>Room 13,6</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-13-5" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-6" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-13">
+      <p>Room 6,13</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-13" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-13" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-3">
+      <p>Room 14,3</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-3" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-14-4" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-12">
+      <p>Room 8,12</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-12" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-8-13" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-8">
+      <p>Room 12,8</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-12-9" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-12-7" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-14">
+      <p>Room 4,14</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-4-13" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-5-14" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-4">
+      <p>Room 14,4</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-14-3" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-4" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-13">
+      <p>Room 7,13</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-7-14" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-13" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-7">
+      <p>Room 13,7</p>
+      <p>There is a door to the east.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-7" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-14">
+      <p>Room 5,14</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-4-14" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-14" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-10">
+      <p>Room 11,10</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-10" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-11-9" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-11">
+      <p>Room 10,11</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-10-12" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-11-11" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-5">
+      <p>Room 14,5</p>
+      <p>There is a door to the east.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-15-5" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-12">
+      <p>Room 9,12</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-9-11" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-12" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-0">
+      <p>Room 15,0</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-14-0" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-1" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-0-15">
+      <p>Room 0,15</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-1-15" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-0-14" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-9">
+      <p>Room 12,9</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-13-9" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-12-8" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-1">
+      <p>Room 15,1</p>
+      <p>There is a door to the north.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-0" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-1-15">
+      <p>Room 1,15</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-2-15" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-0-15" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-2">
+      <p>Room 15,2</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-3" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-14-2" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-2-15">
+      <p>Room 2,15</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-3-15" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-1-15" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-14">
+      <p>Room 6,14</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-14" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-6-15" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-6">
+      <p>Room 14,6</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-6" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-15-6" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-8">
+      <p>Room 13,8</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-8" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-13-9" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-13">
+      <p>Room 8,13</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-8-12" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-9-13" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-3">
+      <p>Room 15,3</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-4" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-2" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-3-15">
+      <p>Room 3,15</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-4-15" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-2-15" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-4">
+      <p>Room 15,4</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-5" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-3" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-4-15">
+      <p>Room 4,15</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-5-15" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-3-15" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-11">
+      <p>Room 11,11</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-10-11" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-11" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-12">
+      <p>Room 10,12</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-11-12" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-10-11" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-10">
+      <p>Room 12,10</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-12-11" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-10" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-14">
+      <p>Room 7,14</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-8-14" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-7-13" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-7">
+      <p>Room 14,7</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-15-7" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-7" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-5">
+      <p>Room 15,5</p>
+      <p>There are doors to the south, west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-6" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-14-5" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-4" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-5-15">
+      <p>Room 5,15</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-6-15" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-4-15" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-13">
+      <p>Room 9,13</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-8-13" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-10-13" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-9">
+      <p>Room 13,9</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-13-8" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-12-9" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-14">
+      <p>Room 8,14</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-8-15" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-7-14" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-8">
+      <p>Room 14,8</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-14-9" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-8" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-6">
+      <p>Room 15,6</p>
+      <p>There are doors to the west, south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-14-6" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-7" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-5" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-6-15">
+      <p>Room 6,15</p>
+      <p>There are doors to the north, west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-6-14" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-5-15" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-7-15" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-12">
+      <p>Room 11,12</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-12" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-10-12" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-11">
+      <p>Room 12,11</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-11" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-12-10" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-10">
+      <p>Room 13,10</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-13-11" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-10" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-13">
+      <p>Room 10,13</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-9-13" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-10-14" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-7">
+      <p>Room 15,7</p>
+      <p>There are doors to the north, west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-6" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-14-7" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-8" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-7-15">
+      <p>Room 7,15</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-6-15" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-8-15" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-14">
+      <p>Room 9,14</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-10-14" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-9-15" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-9">
+      <p>Room 14,9</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-14-10" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-14-8" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-12">
+      <p>Room 12,12</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-13-12" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-12" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-8">
+      <p>Room 15,8</p>
+      <p>There are doors to the north, and south.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-7" title="Take the north door">north</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-9" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-8-15">
+      <p>Room 8,15</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-7-15" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-8-14" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-13">
+      <p>Room 11,13</p>
+      <p>There are doors to the south, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-11-14" title="Take the south door">south</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-12-13" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-11">
+      <p>Room 13,11</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-11" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-13-10" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-14">
+      <p>Room 10,14</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-10-13" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-9-14" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-10">
+      <p>Room 14,10</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-10" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-14-9" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-9">
+      <p>Room 15,9</p>
+      <p>There is a door to the north.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-8" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-9-15">
+      <p>Room 9,15</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-9-14" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-10-15" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-12">
+      <p>Room 13,12</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-12" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-12-12" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-13">
+      <p>Room 12,13</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-11-13" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-13-13" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-14">
+      <p>Room 11,14</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-11-15" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-11-13" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-11">
+      <p>Room 14,11</p>
+      <p>There are doors to the east, and west.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-15-11" title="Take the east door">east</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-11" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-10">
+      <p>Room 15,10</p>
+      <p>There is a door to the south.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-11" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-10-15">
+      <p>Room 10,15</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-9-15" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-11-15" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-13">
+      <p>Room 13,13</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-12-13" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-13-14" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-14">
+      <p>Room 12,14</p>
+      <p>There are doors to the east, and south.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-13-14" title="Take the east door">east</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-12-15" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-12">
+      <p>Room 14,12</p>
+      <p>There are doors to the south, west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-14-13" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-12" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-15-12" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-11">
+      <p>Room 15,11</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-10" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-14-11" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-11-15">
+      <p>Room 11,15</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-10-15" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-11-14" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-14">
+      <p>Room 13,14</p>
+      <p>There are doors to the north, and west.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-13-13" title="Take the north door">north</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-12-14" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-13">
+      <p>Room 14,13</p>
+      <p>There are doors to the south, and north.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-14-14" title="Take the south door">south</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-14-12" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-12">
+      <p>Room 15,12</p>
+      <p>There are doors to the west, and south.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-14-12" title="Take the west door">west</a>
+        </li>
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-13" title="Take the south door">south</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-12-15">
+      <p>Room 12,15</p>
+      <p>There are doors to the north, and east.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-12-14" title="Take the north door">north</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-13-15" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-14">
+      <p>Room 14,14</p>
+      <p>There are doors to the east, and north.</p>
+      <ul class="door-list">
+        <li class="door door-east">
+          <a class="doorLink" href="#room-15-14" title="Take the east door">east</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-14-13" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-13">
+      <p>Room 15,13</p>
+      <p>There is a door to the north.</p>
+      <ul class="door-list">
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-12" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-13-15">
+      <p>Room 13,15</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-12-15" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-14-15" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-14">
+      <p>Room 15,14</p>
+      <p>There are doors to the south, and west.</p>
+      <ul class="door-list">
+        <li class="door door-south">
+          <a class="doorLink" href="#room-15-15" title="Take the south door">south</a>
+        </li>
+        <li class="door door-west">
+          <a class="doorLink" href="#room-14-14" title="Take the west door">west</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-14-15">
+      <p>Room 14,15</p>
+      <p>There are doors to the west, and east.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-13-15" title="Take the west door">west</a>
+        </li>
+        <li class="door door-east">
+          <a class="doorLink" href="#room-15-15" title="Take the east door">east</a>
+        </li>
+      </ul>
+    </li>
+    <li tabindex="0" class="maze-room" id="room-15-15">
+      <p>Room 15,15</p>
+      <p>There are doors to the west, and north.</p>
+      <ul class="door-list">
+        <li class="door door-west">
+          <a class="doorLink" href="#room-14-15" title="Take the west door">west</a>
+        </li>
+        <li class="door door-north">
+          <a class="doorLink" href="#room-15-14" title="Take the north door">north</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+```
+
+Note: So, we've now given each room a list of links that point to the adjacent rooms. They're kind of like doors. And notice how I've given each list item a `tabindex` property. That means it can take focus.
+
+---
+
+<iframe data-src="/accessible-maze-with-links" style="width: 1080px; height: 607.5px; border: none; overflow: hidden; display: block; margin: 0 auto;"></iframe>
+
+Note: If we render that out, it looks like this.
 
 ---
 
@@ -1093,9 +5098,9 @@ Note: Perhaps we could enhance this a little bit by adding links to adjacent roo
   margin: 0;
   width: 28em;
   height: 28em;
-  background-image: url('./img/dungeon-floor.png');
+  background-image: url('./img/floor.png');
   background-size: 64px 64px;
-  border-image: url('./img/dungeon-walls.png');
+  border-image: url('./img/walls.png');
   border-image-slice: 16;
   border-image-repeat: round;
   border-width: 64px;
@@ -1235,5 +5240,13 @@ Note: 1. When we created that accessible version of the maze, that led to us cre
 ## Because it's fun
 
 Note: I called this talk the 'joy' of immutable data, recursion, and pure functions. Sometimes it's fun to just explore an idea and see where it takes you. Sometimes it's fun to create a maze, just for the heck of it. And, personally, I think with all that's going on in the world, we could use a bit more fun and joy in our lives.  
-  
-Thank you.
+
+---
+
+## Thank you
+
+* <https://jrsinclair.com>
+* [@jrsinclair@indieweb.social](https://indieweb.social/@jrsinclair)
+* Book <https://jrsinclair.com/book>
+
+Note: Thank you.
