@@ -726,7 +726,7 @@ Note: So, we're supposed to go back one room. In our case, that means we'll retu
 
 ---
 
-```javascript [10-15]
+```javascript [10-12]
 // maze.js
 function buildMaze(room, mazeSoFar, seed0) {
 
@@ -737,10 +737,7 @@ function buildMaze(room, mazeSoFar, seed0) {
   }
 
   // Pick a room from the list of candidates.
-  const [seed1, idx] = randomInRange(
-    seed0,
-    candidates.length
-  );
+  const [seed1, idx] = randomInRange(seed0, candidates.length);
   const roomToConnect = candidates[idx];
 }
 ```
@@ -749,7 +746,7 @@ Note: Next, we pick a room from the candidate list at random. That give us a new
 
 ---
 
-```javascript [1-17|6-9|11-16]
+```javascript [1-17|6-9|11-12]
 // maze.js
 function buildMaze(room, mazeSoFar, seed0) {
   
@@ -761,11 +758,7 @@ function buildMaze(room, mazeSoFar, seed0) {
     .set(newRoom, mazeSoFar.get(newRoom).push(room));
 
   // Move to the newly connected room.
-  const someReturnValueWeHaventFiguredOut = buildMaze(
-    roomToConnect,
-    mazeWithConnectedRoom,
-    seed1,
-  );
+  const someReturnValueWeHaventFiguredOut = buildMaze(roomToConnect, mazeWithConnectedRoom, seed1);
 }
 ```
 
@@ -792,7 +785,7 @@ Note: We already know which room to pass along. But this list tells us what our 
 
 ---
 
-```javascript [12|18-20]
+```javascript [12|14-16]
 // maze.js
 function buildMaze(room, mazeSoFar, seed0) {
   
@@ -804,11 +797,7 @@ function buildMaze(room, mazeSoFar, seed0) {
     .set(newRoom, mazeSoFar.get(newRoom).push(room));
   
   // Move to the newly connected room.
-  const [newMaze, seed2] = buildMaze(
-    roomToConnect,
-    mazeWithConnectedRoom,
-    seed1
-  );
+  const [newMaze, seed2] = buildMaze(roomToConnect, mazeWithConnectedRoom, seed1);
   
   // There may still be other directions we can connect
   // to this room, so we call buildMaze() again.
@@ -820,7 +809,7 @@ Note: So we fill in those return values. And with those in place, we can make th
 
 ---
 
-```javascript [7|22]
+```javascript [7|1-25]
 // maze.js
 function buildMaze(room, mazeSoFar, seed0) {
 
@@ -831,10 +820,7 @@ function buildMaze(room, mazeSoFar, seed0) {
   }
 
   // Pick a room from the list of candidates.
-  const [seed1, idx] = randomInRange(
-    seed0,
-    candidates.length
-  );
+  const [seed1, idx] = randomInRange(seed0, candidates.length);
 
   // Construct a new maze with the connected room.
   const mazeWithConnectedRoom = mazeSoFar
@@ -842,11 +828,7 @@ function buildMaze(room, mazeSoFar, seed0) {
     .set(newRoom, mazeSoFar.get(newRoom).push(room));
   
   // Move to the newly connected room.
-  const [newMaze, seed2] = buildMaze(
-    roomToConnect,
-    mazeWithConnectedRoom,
-    seed1
-  );
+  const [newMaze, seed2] = buildMaze(roomToConnect, mazeWithConnectedRoom, seed1);
   
   // There may still be other directions we can connect
   // to this room, so we call buildMaze() again.
@@ -867,11 +849,8 @@ Note: All we need to do is wire it up with the initial sate. We'll do that in a 
 ```javascript
 // maze.js
 export function maze(n, seed0) {
-  const [room, emptyMaze, seed1]
-    = buildInitialState(n, seed0);
-
+  const [room, emptyMaze, seed1] = buildInitialState(n, seed0);
   const [maze] = buildMaze(room, emptyMaze seed1);
-
   return maze;
 }
 ```
@@ -933,33 +912,26 @@ Note: One final challenge I'd like to leave you with is that neither this SVG re
 ---
 
 ```javascript
-const doorsDescription = (doors: List<Point>, room: Point) => {
-  const dirs = doors.map((door) => {
-    const direction = directionToString.get(subtractPoint(door)(room));
-    return direction;
-  });
-  return dirs.set(-1, (doors.size > 1 ? 'and ' : '') + dirs.get(-1)).join(', ');
+const doorsDescription = (doors, room) => {
+  const prefix = `${doors.size === 1 ? 'There is a door' : 'There are doors'} to the `;
+  const dirs = doors.map((door) => directionToString.get(subtractPoint(door)(room)));
+  return prefix + dirs.set(-1, (doors.size > 1 ? 'and ' : '') + dirs.get(-1)).join(', ');
 };
 
-export const roomsToList = (rooms: Map<Point, List<Point>>) => {
-  return (
-    '<ul class="room-list">' +
-    rooms
-      .sortBy((_, { x, y }) => Math.sqrt(x ** 2 + y ** 2))
-      .map(
-        (doors, room) =>
-          `<li tabindex="0" class="maze-room" id="room-${room.x}-${room.y}">
-          <p>Room ${room.x},${room.y}</p>
-          <p>${doors.size === 1 ? 'There is a door' : 'There are doors'} to the ${doorsDescription(
-            doors,
-            room,
-          )}.</p>
-         </li>`,
-      )
-      .join('\n') +
-    '</ul>'
-  );
-};
+export const roomsToList = (rooms) => (
+  '<ul class="room-list">' +
+  rooms
+    .sortBy((_, { x, y }) => Math.sqrt(x ** 2 + y ** 2))
+    .map(
+      (doors, room) =>
+        `<li tabindex="0" class="maze-room" id="room-${room.x}-${room.y}">
+        <p>Room ${room.x},${room.y}</p>
+        <p>${doorsDescription(doors, room)}.</p>
+        </li>`,
+    )
+    .join('\n') +
+  '</ul>'
+);
 ```
 
 Note: One simple thing we could try is creating a list of all the rooms as HTML. It's not pretty, but it does contain all the information in the maze.
@@ -1997,11 +1969,13 @@ Note: One simple thing we could try is creating a list of all the rooms as HTML.
 </div>
 ```
 
-Note: Perhaps we could enhance this a little bit by adding links to adjacent rooms. That way, you could navigate through the list using your keyboard.
+Note: This is how the HTML comes out.
 
 ---
 
 <iframe data-src="/accessible-maze-boring" style="width: 1080px; height: 667px; border: none; overflow: hidden; display: block; margin: 0 auto;"></iframe>
+
+Note: And if we render it, it looks like so. Rather dull. But perhaps we could enhance this a little bit by adding links to adjacent rooms. That way, you could navigate through the list using your keyboard.
 
 ---
 
