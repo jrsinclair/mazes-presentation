@@ -394,7 +394,7 @@ Note: Again, you might legitimately ask, 'So what?' But things get interesting i
 
 ## Map
 
-Note: For example, I could use these points as keys in a Map. I'm going to use the Map from the venerable Immutable.js library, but it will work just fine with the built-in JavaScript Set too.
+Note: For example, I could use these points as keys in a Map. I'm going to use the Map from the venerable Immutable.js library, but it will work just fine with the built-in JavaScript Map too.
 
 ---
 
@@ -723,6 +723,10 @@ function buildMaze(room, mazeSoFar, seed0) {
 ```
 
 Note: So, we're supposed to go back one room. In our case, that means we'll return. This becomes our exit condition. We'll come back and fill in that return value in a moment.
+
+---
+
+## Step 4
 
 ---
 
@@ -5221,6 +5225,6 @@ Note: I called this talk the 'joy' of immutable data, recursion, and pure functi
 
 * <https://jrsinclair.com>
 * [@jrsinclair@indieweb.social](https://indieweb.social/@jrsinclair)
-* Book <https://jrsinclair.com/book>
+* Book <https://jrsinclair.com/skeptics-guide>
 
 Note: Thank you.
