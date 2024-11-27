@@ -16,7 +16,7 @@ Note: I want to start by addressing the elephant in the room. Why the heck am I 
 
 ## Practical
 
-Note: I try to be practical when I'm writing or speaking. I want to give people tools they can use to make their coding lives better. So, instead of giving examples about adding numbers together, I talk about creating DOM elements and processing JSON data. Those things are practical. I don't want to waste people's time on things they're not going to use.
+Note: You see, normally, I try to be practical when I'm writing or speaking. I want to give people tools they can use to make their coding lives better. So, I try to talk about things like creating DOM elements and processing JSON data. Because those things are practical. I don't want to waste people's time on things they're not going to use.
 
 ---
 
@@ -35,7 +35,7 @@ Note: Why am I here, then? Why bother telling you all about something you're nev
 
 ## A Goldilocks problem
 
-Note: The nice thing about generating mazes is that the problem is not too big, and not too small. An issue I often have is that people ask me for 'real world' examples. But the trouble with 'real world' examples is that they're way more complex than you can reasonably talk about in a 25 minute presentation. But a maze is just complex enough to be interesting.
+Note: The nice thing about generating mazes is that the problem is not too big, and not too small. An issue I often have is that people ask me for 'real world' examples. But the trouble with 'real world' examples is that they're way more complex than you can reasonably talk about in a 25 minute presentation. There's edge cases of error-handling, network outages, and input validation. But a maze is a contained problem that's just complex enough to be interesting.
 
 ---
 
@@ -270,23 +270,9 @@ Note: We'll create a helper class, Point, that represents and x, y coordinate.
 
 ---
 
-```javascript
-// point.js
-class Point {
-  x;
-  y;
-}
-```
-
-Note: If we were using TypeScript, I might do things differently, but with Vanilla JS we'll create a class. And it has two properties: an x-value and a y-value.
-
----
-
 ```javascript [5-8]
 // point.js
 class Point {
-  x;
-  y;
   constructor(x, y) {
     this.x = x;
     this.y = y;
@@ -294,13 +280,13 @@ class Point {
 }
 ```
 
-Note: So we'll create a constructor that takes an x-value and a y-value. And we now have a simple class.
+Note: It has a constructor that takes and x-value, and a y-value, and assigns those to properties. There's not much to it. But we now have a simple class.
 
 ---
 
 ## This isn't immutable (yet)
 
-Note: Now, so far, this is rather obvious and boring. And it's not immutable. So what we're going to do is hide this class away. We won't export it. Instead, we're going to create a constructor function, `point()`, and that will be the only way to get yourself a point.
+Note: Now, so far, this is rather obvious and boring. And it's not immutable. So what we're going to do is hide this class away. We won't export it. Instead, we're going to create a constructor function, `point()` (with a lowercase 'p'), and that will be the only way to get yourself a point.
 
 ---
 
@@ -314,7 +300,7 @@ export function point(x, y) {
 }
 ```
 
-Note: It takes an x and a y coordinate, and returns as a Point object. But we still haven't achieved immutability yet. To do that, we're going to memoise this function. That is, we're going to create a cache of all the x/y values we've seen so far, and if we've already seen one we'll return the point we've already created.
+Note: So here's our constructor function. It takes an x and a y coordinate, calls the class constructor, and returns as a Point object. But we still haven't achieved immutability yet. To do that, we're going to _memoise_ this function. That is, we're going to create a cache of all the x/y values we've seen so far, and if we've already seen one we'll return the point we've already created.
 
 ---
 
@@ -323,7 +309,7 @@ Note: It takes an x and a y coordinate, and returns as a Point object. But we st
 const allPoints = new Map();
 ```
 
-Note: Ironically, we make this happen by creating a mutable Map to act as our cache.
+Note: We create our cache using the built-in Map structure. In this case, we call it `allPoints`.
 
 ---
 
@@ -339,7 +325,7 @@ export function point(x, y) {
 }
 ```
 
-Note: So, when a new call for a point comes in, we convert the x/y pair into a string. Then we use that to check to see if we've already seen this pair of numbers before. If we have, we return the existing point. If not, we'll create a new one.
+Note: So here's our memoised function. When a new call for a point comes in, we convert the x/y pair into a string. Then we use that to check to see if we've already seen this pair of numbers before. If we have, we return the existing point. If not, we'll create a new one.
 
 ---
 
@@ -368,7 +354,7 @@ Note: OK. We now have a helper class. And let's face it, it doesn't do much. So 
 
 ## ===
 
-Note: For now, building a special class like this lets me do something plain objects can't. I can compare them using triple equals. (This may change in future, but for now we make do with what we have).
+Note: Well, building a special class like this lets me do something plain objects can't. I can compare them using triple equals.
 
 ---
 
@@ -382,7 +368,7 @@ const pointB = point(3, 5);
 pA === pB // true
 ```
 
-Note: So let's try this. I'll create an object A, and I create an object B and compare them with `===`, and I get `false`. But if I use my `point()` function, and I do `===`, I get `true`.
+Note: So let's try this. I'll create an object A, and I create an object B and compare them with `===`, and I get `false`. This is because `objA` and `objB` are pointing to two different locations in memory. But if I use my `point()` function, and I do `===`, I get `true`. Because we memoised our function, `pA` and `pB` are pointing to the same memory location.
 
 ---
 
@@ -394,7 +380,7 @@ Note: Again, you might legitimately ask, 'So what?' But things get interesting i
 
 ## Map
 
-Note: For example, I could use these points as keys in a Map. I'm going to use the Map from the venerable Immutable.js library, but it will work just fine with the built-in JavaScript Map too.
+Note: For example, I could use these points as keys in a Map structure. I'm going to use the Map from the venerable Immutable.js library, but it will work just fine with the built-in JavaScript Map too.
 
 ---
 
@@ -422,7 +408,7 @@ console.log(mapWithPoints.toArray());
 // ]
 ```
 
-Note: Again, I'm using Immutable.js Map, but  you can use the built-in JS class just fine too. And this is where things start to get interesting. Because using the right data structures will be crucial for our maze-building algorithm.
+Note: So we import that Map structure from Immutable, and when we create a map using plain objects, we get two entries—even though the values in the objects are the same. But if we use our point constructor, the second point overwrites the first, which is what we expect. And this is where things start to get interesting. Because using the right data structures will be crucial for our maze-building algorithm.
 
 ---
 
@@ -453,19 +439,19 @@ Note: If we're going to turn this algorithm into code. We need to set things up 
 
 ## A grid of unconnected rooms
 
-Note: For now, were going to assume we're only building square mazes. And to help us build our set of unconnected rooms, we're going to do a little bit of math. 
+Note: So let's start building those out. We'll start with the grid. And, for now, were going to assume we're only building square mazes. And to help us build our set of unconnected rooms, we're going to do a little bit of math. 
 
 ---
 
 $$ n ^ 2 $$
 
-Note: So the total number of rooms will be $$n^2$$. So we can create an array with $$n^2$$ entries, and map over it to create a Map.
+Note: So the total number of rooms will be $$n^2$$. So we can create an array with $$n^2$$ entries, and map over it to create a Map structure that will represent our maze.
 
 ---
 
-## Point → List<Point>
+## Point → List&lt;Point&gt;
 
-Note: This (immutable) Map will have points as keys, and each value for the map will be a List of rooms it's connected to.
+Note: This (immutable) Map structure will have points as keys, and each value for the map will be a List of rooms it's connected to.
 
 ---
 
@@ -485,13 +471,13 @@ const roomList = emptyArray.map(
 const grid = Map(roomList);
 ```
 
-Note: All we do is create an array with n^2 entries, then we map over it to create an array of pairs. The left item in each pair is a point. And the right item in the pair is an empty list. We then pass that list of pairs to the Map constructor and that creates our Map.
+Note: All we do is create an array with n^2 entries, then we map over it to create an array of pairs. The left item in each pair is a point. The x-value for the point is `i` mod `n`. The y-value is `i` divided by `n`. And the right item in the pair is an empty list. We then pass that list of pairs to the immutable Map constructor and that creates our Map.
 
 ---
 
 ## A random room to start in
 
-Note: In our algorithm, we need to pick things at random. Like, for instance, our starting room. But for this exercise, we're trying to work with pure functions as much as possible. And something that's different every time you call it is considered 'impure'. So, we're going to quickly whip up our own pseudo random number generator to sidestep this problem.
+Note: Next, we need a room picked at random to start in. But for this exercise, we're trying to work with pure functions as much as possible. And something that's different every time you call it , like `Math.random()`, is considered 'impure'. So, we're going to quickly whip up our own pseudo random number generator to sidestep this problem.
 
 ---
 
@@ -519,7 +505,7 @@ const randomValue1 = randomInt(seed);
 const randomValue2 = randomInt(randomValue1);
 ```
 
-Note: To get random numbers, we start with a seed. And this seed can be any integer. We pass that seed to our `randomInt()` function. And, once we've called that, we can get another pseudorandom value by passing that seed to `randomInt()` again. And if I keep doing that, I can get as many pseudorandom numbers as I want. But, if I give it the same starting seed, I will always get the same sequence of integers.
+Note: Here's how we use that function. To get a random number, we start with a seed. And this seed can be any integer. We pass that seed to our `randomInt()` function. And, once we've called that, we can get another pseudorandom value by passing the returned value to `randomInt()` again. And if I keep doing that, I can get as many pseudorandom numbers as I want. But, if I give it the same starting seed, I will always get the same sequence of integers.
 
 ---
 
@@ -531,7 +517,7 @@ export function randomInRange(seed, n) {
 }
 ```
 
-Note: For our purposes though, we' mostly want a random number in a range between 0 and some number. So we'll use another helper. All it does is a little bit of math to make the random number fit the range we want. But, it also returns the raw integer, so we can use it as a seed for future generation.
+Note: For our purposes though, we mostly want a random number in a range between 0 and some number. So we'll use another helper. All it does is a little bit of math to make the random number fit the range we want. But, it also returns the raw integer, so we can use it as a seed for future generation.
 
 ---
 
@@ -547,7 +533,7 @@ function buildInitialState(n, seed) {
   );
   const grid = Map(roomList);
 
-  const [newSeed, roomIdx] = randomInRange(n ** 2);
+  const [newSeed, roomIdx] = randomInRange(seed, n ** 2);
   const room = roomList[roomIdx][0];
 
   return [room, grid, newSeed];
@@ -578,7 +564,7 @@ Note: But I would argue that it's just as easy to get yourself into a situation 
 
 ## Rules for safe loops
 
-Note: You've most likely been taught two rules:
+Note: You've most likely been taught (or have taught yourself) two rules:
 
 ---
 
@@ -666,7 +652,7 @@ Note: We'll start by creating some constants. We have North, South, East, and We
 
 ```javascript
 // point.js
-export const addPoint = (a) => (b) => point(
+export const addPoint = (a, b) => point(
   a.x + b.x,
   a.y + b.y
 );
@@ -682,7 +668,7 @@ import {point, NORTH, SOUTH, EAST, WEST} from './point';
 
 function getCandidates(room, mazeSoFar) {
     return [NORTH, SOUTH, EAST, WEST]
-        .map(addPoint(room))
+        .map(direction => addPoint(room, direction))
         .filter((pt) => mazeSoFar.get(pt)?.size === 0);
 }
 ```
@@ -704,9 +690,9 @@ Note: We can then use that in our main function.
 
 ---
 
-## What if there are no adjacent unconnected rooms?
+## What about the exit condition?
 
-Note: Now, it might be that there are no unconnected rooms left adjacent to the current room. That means we've gone as far as we can along this path.
+Note: Now, it might be that there are no unconnected rooms left adjacent to the current room. That means we've gone as far as we can along this path. We've reached our exit condition.
 
 ---
 
@@ -722,11 +708,13 @@ function buildMaze(room, mazeSoFar, seed0) {
 }
 ```
 
-Note: So, we're supposed to go back one room. In our case, that means we'll return. This becomes our exit condition. We'll come back and fill in that return value in a moment.
+Note: So, we're now supposed to go back one room. In our case, that means we'll return. This becomes our exit condition. We'll come back and fill in that return value in a moment.
 
 ---
 
-## Step 4
+## Pick one of the rooms in the list at random and connect it
+
+Note: We've completed the first three steps, and we're now at step four.
 
 ---
 
@@ -746,7 +734,7 @@ function buildMaze(room, mazeSoFar, seed0) {
 }
 ```
 
-Note: Next, we pick a room from the candidate list at random. That give us a new seed that we'll hold on to for now.
+Note: That is, we pick a room from the candidate list at random. That give us a new seed that we'll hold on to for now.
 
 ---
 
@@ -911,1061 +899,1034 @@ Note: But we can also render these as SVG.
 
 ## Could we render an accessible maze?
 
-Note: One final challenge I'd like to leave you with is that neither this SVG rendering or the text rendering is accessible. It's not going to make sense to anyone using assistive technologies unless they're sighted. Is there a way we could do better?
-
----
-
-```javascript
-const doorsDescription = (doors, room) => {
-  const prefix = `${doors.size === 1 ? 'There is a door' : 'There are doors'} to the `;
-  const dirs = doors.map((door) => directionToString.get(subtractPoint(door)(room)));
-  return prefix + dirs.set(-1, (doors.size > 1 ? 'and ' : '') + dirs.get(-1)).join(', ');
-};
-
-export const roomsToList = (rooms) => (
-  '<ul class="room-list">' +
-  rooms
-    .sortBy((_, { x, y }) => Math.sqrt(x ** 2 + y ** 2))
-    .map(
-      (doors, room) =>
-        `<li tabindex="0" class="maze-room" id="room-${room.x}-${room.y}">
-        <p>Room ${room.x},${room.y}</p>
-        <p>${doorsDescription(doors, room)}.</p>
-        </li>`,
-    )
-    .join('\n') +
-  '</ul>'
-);
-```
-
-Note: One simple thing we could try is creating a list of all the rooms as HTML. It's not pretty, but it does contain all the information in the maze.
+Note: The trouble with both these approaches is that they're inaccessible. They're not going to make sense to anyone using assistive technologies unless they're sighted. So, is there a way we could do better?
 
 ---
 
 ```html
 <div class="accessibleMaze">
   <ul class="room-list">
-    <li tabindex="0" class="maze-room" id="room-0-0">
+    <li class="maze-room">
       <p>Room 0,0</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-0">
+    <li class="maze-room">
       <p>Room 1,0</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-1">
+    <li class="maze-room">
       <p>Room 0,1</p>
       <p>There are doors to the east, north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-1">
+    <li class="maze-room">
       <p>Room 1,1</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-2">
+    <li class="maze-room">
       <p>Room 0,2</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-0">
+    <li class="maze-room">
       <p>Room 2,0</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-2">
+    <li class="maze-room">
       <p>Room 1,2</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-1">
+    <li class="maze-room">
       <p>Room 2,1</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-2">
+    <li class="maze-room">
       <p>Room 2,2</p>
       <p>There is a door to the east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-0">
+    <li class="maze-room">
       <p>Room 3,0</p>
       <p>There is a door to the south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-3">
+    <li class="maze-room">
       <p>Room 0,3</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-3">
+    <li class="maze-room">
       <p>Room 1,3</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-1">
+    <li class="maze-room">
       <p>Room 3,1</p>
       <p>There are doors to the west, north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-2">
+    <li class="maze-room">
       <p>Room 3,2</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-3">
+    <li class="maze-room">
       <p>Room 2,3</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-4">
+    <li class="maze-room">
       <p>Room 0,4</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-0">
+    <li class="maze-room">
       <p>Room 4,0</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-4">
+    <li class="maze-room">
       <p>Room 1,4</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-1">
+    <li class="maze-room">
       <p>Room 4,1</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-3">
+    <li class="maze-room">
       <p>Room 3,3</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-4">
+    <li class="maze-room">
       <p>Room 2,4</p>
       <p>There is a door to the south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-2">
+    <li class="maze-room">
       <p>Room 4,2</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-4">
+    <li class="maze-room">
       <p>Room 3,4</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-0">
+    <li class="maze-room">
       <p>Room 5,0</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-5">
+    <li class="maze-room">
       <p>Room 0,5</p>
       <p>There is a door to the south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-3">
+    <li class="maze-room">
       <p>Room 4,3</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-5">
+    <li class="maze-room">
       <p>Room 1,5</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-1">
+    <li class="maze-room">
       <p>Room 5,1</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-2">
+    <li class="maze-room">
       <p>Room 5,2</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-5">
+    <li class="maze-room">
       <p>Room 2,5</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-4">
+    <li class="maze-room">
       <p>Room 4,4</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-5">
+    <li class="maze-room">
       <p>Room 3,5</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-3">
+    <li class="maze-room">
       <p>Room 5,3</p>
       <p>There is a door to the east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-6">
+    <li class="maze-room">
       <p>Room 0,6</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-0">
+    <li class="maze-room">
       <p>Room 6,0</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-6">
+    <li class="maze-room">
       <p>Room 1,6</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-1">
+    <li class="maze-room">
       <p>Room 6,1</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-6">
+    <li class="maze-room">
       <p>Room 2,6</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-2">
+    <li class="maze-room">
       <p>Room 6,2</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-4">
+    <li class="maze-room">
       <p>Room 5,4</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-5">
+    <li class="maze-room">
       <p>Room 4,5</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-6">
+    <li class="maze-room">
       <p>Room 3,6</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-3">
+    <li class="maze-room">
       <p>Room 6,3</p>
       <p>There are doors to the south, north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-0">
+    <li class="maze-room">
       <p>Room 7,0</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-7">
+    <li class="maze-room">
       <p>Room 0,7</p>
       <p>There are doors to the south, north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-7">
+    <li class="maze-room">
       <p>Room 1,7</p>
       <p>There is a door to the west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-5">
+    <li class="maze-room">
       <p>Room 5,5</p>
       <p>There are doors to the east, north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-1">
+    <li class="maze-room">
       <p>Room 7,1</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-6">
+    <li class="maze-room">
       <p>Room 4,6</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-4">
+    <li class="maze-room">
       <p>Room 6,4</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-2">
+    <li class="maze-room">
       <p>Room 7,2</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-7">
+    <li class="maze-room">
       <p>Room 2,7</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-7">
+    <li class="maze-room">
       <p>Room 3,7</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-3">
+    <li class="maze-room">
       <p>Room 7,3</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-6">
+    <li class="maze-room">
       <p>Room 5,6</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-5">
+    <li class="maze-room">
       <p>Room 6,5</p>
       <p>There are doors to the east, south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-0">
+    <li class="maze-room">
       <p>Room 8,0</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-8">
+    <li class="maze-room">
       <p>Room 0,8</p>
       <p>There are doors to the east, north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-8">
+    <li class="maze-room">
       <p>Room 1,8</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-4">
+    <li class="maze-room">
       <p>Room 7,4</p>
       <p>There is a door to the north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-7">
+    <li class="maze-room">
       <p>Room 4,7</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-1">
+    <li class="maze-room">
       <p>Room 8,1</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-8">
+    <li class="maze-room">
       <p>Room 2,8</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-2">
+    <li class="maze-room">
       <p>Room 8,2</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-6">
+    <li class="maze-room">
       <p>Room 6,6</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-8">
+    <li class="maze-room">
       <p>Room 3,8</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-3">
+    <li class="maze-room">
       <p>Room 8,3</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-7">
+    <li class="maze-room">
       <p>Room 5,7</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-5">
+    <li class="maze-room">
       <p>Room 7,5</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-8">
+    <li class="maze-room">
       <p>Room 4,8</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-4">
+    <li class="maze-room">
       <p>Room 8,4</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-0">
+    <li class="maze-room">
       <p>Room 9,0</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-9">
+    <li class="maze-room">
       <p>Room 0,9</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-9">
+    <li class="maze-room">
       <p>Room 1,9</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-1">
+    <li class="maze-room">
       <p>Room 9,1</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-6">
+    <li class="maze-room">
       <p>Room 7,6</p>
       <p>There is a door to the west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-2">
+    <li class="maze-room">
       <p>Room 9,2</p>
       <p>There are doors to the north, east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-9">
+    <li class="maze-room">
       <p>Room 2,9</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-7">
+    <li class="maze-room">
       <p>Room 6,7</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-8">
+    <li class="maze-room">
       <p>Room 5,8</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-5">
+    <li class="maze-room">
       <p>Room 8,5</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-9">
+    <li class="maze-room">
       <p>Room 3,9</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-3">
+    <li class="maze-room">
       <p>Room 9,3</p>
       <p>There is a door to the north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-4">
+    <li class="maze-room">
       <p>Room 9,4</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-9">
+    <li class="maze-room">
       <p>Room 4,9</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-7">
+    <li class="maze-room">
       <p>Room 7,7</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-10">
+    <li class="maze-room">
       <p>Room 0,10</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-8">
+    <li class="maze-room">
       <p>Room 6,8</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-6">
+    <li class="maze-room">
       <p>Room 8,6</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-0">
+    <li class="maze-room">
       <p>Room 10,0</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-10">
+    <li class="maze-room">
       <p>Room 1,10</p>
       <p>There is a door to the south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-1">
+    <li class="maze-room">
       <p>Room 10,1</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-10">
+    <li class="maze-room">
       <p>Room 2,10</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-2">
+    <li class="maze-room">
       <p>Room 10,2</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-9">
+    <li class="maze-room">
       <p>Room 5,9</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-5">
+    <li class="maze-room">
       <p>Room 9,5</p>
       <p>There are doors to the south, east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-10">
+    <li class="maze-room">
       <p>Room 3,10</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-3">
+    <li class="maze-room">
       <p>Room 10,3</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-8">
+    <li class="maze-room">
       <p>Room 7,8</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-7">
+    <li class="maze-room">
       <p>Room 8,7</p>
       <p>There are doors to the east, south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-10">
+    <li class="maze-room">
       <p>Room 4,10</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-4">
+    <li class="maze-room">
       <p>Room 10,4</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-6">
+    <li class="maze-room">
       <p>Room 9,6</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-9">
+    <li class="maze-room">
       <p>Room 6,9</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-0">
+    <li class="maze-room">
       <p>Room 11,0</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-11">
+    <li class="maze-room">
       <p>Room 0,11</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-11">
+    <li class="maze-room">
       <p>Room 1,11</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-1">
+    <li class="maze-room">
       <p>Room 11,1</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-10">
+    <li class="maze-room">
       <p>Room 5,10</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-2">
+    <li class="maze-room">
       <p>Room 11,2</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-11">
+    <li class="maze-room">
       <p>Room 2,11</p>
       <p>There are doors to the north, west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-5">
+    <li class="maze-room">
       <p>Room 10,5</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-8">
+    <li class="maze-room">
       <p>Room 8,8</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-11">
+    <li class="maze-room">
       <p>Room 3,11</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-9">
+    <li class="maze-room">
       <p>Room 7,9</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-7">
+    <li class="maze-room">
       <p>Room 9,7</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-3">
+    <li class="maze-room">
       <p>Room 11,3</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-10">
+    <li class="maze-room">
       <p>Room 6,10</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-6">
+    <li class="maze-room">
       <p>Room 10,6</p>
       <p>There is a door to the north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-4">
+    <li class="maze-room">
       <p>Room 11,4</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-11">
+    <li class="maze-room">
       <p>Room 4,11</p>
       <p>There is a door to the south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-12">
+    <li class="maze-room">
       <p>Room 0,12</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-0">
+    <li class="maze-room">
       <p>Room 12,0</p>
       <p>There are doors to the south, west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-12">
+    <li class="maze-room">
       <p>Room 1,12</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-8">
+    <li class="maze-room">
       <p>Room 9,8</p>
       <p>There is a door to the south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-9">
+    <li class="maze-room">
       <p>Room 8,9</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-1">
+    <li class="maze-room">
       <p>Room 12,1</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-11">
+    <li class="maze-room">
       <p>Room 5,11</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-5">
+    <li class="maze-room">
       <p>Room 11,5</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-12">
+    <li class="maze-room">
       <p>Room 2,12</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-2">
+    <li class="maze-room">
       <p>Room 12,2</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-10">
+    <li class="maze-room">
       <p>Room 7,10</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-7">
+    <li class="maze-room">
       <p>Room 10,7</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-12">
+    <li class="maze-room">
       <p>Room 3,12</p>
       <p>There are doors to the north, west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-3">
+    <li class="maze-room">
       <p>Room 12,3</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-6">
+    <li class="maze-room">
       <p>Room 11,6</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-11">
+    <li class="maze-room">
       <p>Room 6,11</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-12">
+    <li class="maze-room">
       <p>Room 4,12</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-4">
+    <li class="maze-room">
       <p>Room 12,4</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-9">
+    <li class="maze-room">
       <p>Room 9,9</p>
       <p>There are doors to the south, north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-10">
+    <li class="maze-room">
       <p>Room 8,10</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-8">
+    <li class="maze-room">
       <p>Room 10,8</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-12">
+    <li class="maze-room">
       <p>Room 5,12</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-0">
+    <li class="maze-room">
       <p>Room 13,0</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-13">
+    <li class="maze-room">
       <p>Room 0,13</p>
       <p>There is a door to the south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-5">
+    <li class="maze-room">
       <p>Room 12,5</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-13">
+    <li class="maze-room">
       <p>Room 1,13</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-11">
+    <li class="maze-room">
       <p>Room 7,11</p>
       <p>There are doors to the south, east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-7">
+    <li class="maze-room">
       <p>Room 11,7</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-1">
+    <li class="maze-room">
       <p>Room 13,1</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-2">
+    <li class="maze-room">
       <p>Room 13,2</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-13">
+    <li class="maze-room">
       <p>Room 2,13</p>
       <p>There is a door to the north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-13">
+    <li class="maze-room">
       <p>Room 3,13</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-3">
+    <li class="maze-room">
       <p>Room 13,3</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-12">
+    <li class="maze-room">
       <p>Room 6,12</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-6">
+    <li class="maze-room">
       <p>Room 12,6</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-10">
+    <li class="maze-room">
       <p>Room 9,10</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-9">
+    <li class="maze-room">
       <p>Room 10,9</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-8">
+    <li class="maze-room">
       <p>Room 11,8</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-4">
+    <li class="maze-room">
       <p>Room 13,4</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-13">
+    <li class="maze-room">
       <p>Room 4,13</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-11">
+    <li class="maze-room">
       <p>Room 8,11</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-12">
+    <li class="maze-room">
       <p>Room 7,12</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-7">
+    <li class="maze-room">
       <p>Room 12,7</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-13">
+    <li class="maze-room">
       <p>Room 5,13</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-5">
+    <li class="maze-room">
       <p>Room 13,5</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-14">
+    <li class="maze-room">
       <p>Room 0,14</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-0">
+    <li class="maze-room">
       <p>Room 14,0</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-14">
+    <li class="maze-room">
       <p>Room 1,14</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-1">
+    <li class="maze-room">
       <p>Room 14,1</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-14">
+    <li class="maze-room">
       <p>Room 2,14</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-10">
+    <li class="maze-room">
       <p>Room 10,10</p>
       <p>There is a door to the north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-2">
+    <li class="maze-room">
       <p>Room 14,2</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-11">
+    <li class="maze-room">
       <p>Room 9,11</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-9">
+    <li class="maze-room">
       <p>Room 11,9</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-14">
+    <li class="maze-room">
       <p>Room 3,14</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-6">
+    <li class="maze-room">
       <p>Room 13,6</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-13">
+    <li class="maze-room">
       <p>Room 6,13</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-3">
+    <li class="maze-room">
       <p>Room 14,3</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-12">
+    <li class="maze-room">
       <p>Room 8,12</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-8">
+    <li class="maze-room">
       <p>Room 12,8</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-14">
+    <li class="maze-room">
       <p>Room 4,14</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-4">
+    <li class="maze-room">
       <p>Room 14,4</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-13">
+    <li class="maze-room">
       <p>Room 7,13</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-7">
+    <li class="maze-room">
       <p>Room 13,7</p>
       <p>There is a door to the east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-14">
+    <li class="maze-room">
       <p>Room 5,14</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-10">
+    <li class="maze-room">
       <p>Room 11,10</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-11">
+    <li class="maze-room">
       <p>Room 10,11</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-5">
+    <li class="maze-room">
       <p>Room 14,5</p>
       <p>There is a door to the east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-12">
+    <li class="maze-room">
       <p>Room 9,12</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-0">
+    <li class="maze-room">
       <p>Room 15,0</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-0-15">
+    <li class="maze-room">
       <p>Room 0,15</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-9">
+    <li class="maze-room">
       <p>Room 12,9</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-1">
+    <li class="maze-room">
       <p>Room 15,1</p>
       <p>There is a door to the north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-1-15">
+    <li class="maze-room">
       <p>Room 1,15</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-2">
+    <li class="maze-room">
       <p>Room 15,2</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-2-15">
+    <li class="maze-room">
       <p>Room 2,15</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-14">
+    <li class="maze-room">
       <p>Room 6,14</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-6">
+    <li class="maze-room">
       <p>Room 14,6</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-8">
+    <li class="maze-room">
       <p>Room 13,8</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-13">
+    <li class="maze-room">
       <p>Room 8,13</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-3">
+    <li class="maze-room">
       <p>Room 15,3</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-3-15">
+    <li class="maze-room">
       <p>Room 3,15</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-4">
+    <li class="maze-room">
       <p>Room 15,4</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-4-15">
+    <li class="maze-room">
       <p>Room 4,15</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-11">
+    <li class="maze-room">
       <p>Room 11,11</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-12">
+    <li class="maze-room">
       <p>Room 10,12</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-10">
+    <li class="maze-room">
       <p>Room 12,10</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-14">
+    <li class="maze-room">
       <p>Room 7,14</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-7">
+    <li class="maze-room">
       <p>Room 14,7</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-5">
+    <li class="maze-room">
       <p>Room 15,5</p>
       <p>There are doors to the south, west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-5-15">
+    <li class="maze-room">
       <p>Room 5,15</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-13">
+    <li class="maze-room">
       <p>Room 9,13</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-9">
+    <li class="maze-room">
       <p>Room 13,9</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-14">
+    <li class="maze-room">
       <p>Room 8,14</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-8">
+    <li class="maze-room">
       <p>Room 14,8</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-6">
+    <li class="maze-room">
       <p>Room 15,6</p>
       <p>There are doors to the west, south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-6-15">
+    <li class="maze-room">
       <p>Room 6,15</p>
       <p>There are doors to the north, west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-12">
+    <li class="maze-room">
       <p>Room 11,12</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-11">
+    <li class="maze-room">
       <p>Room 12,11</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-10">
+    <li class="maze-room">
       <p>Room 13,10</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-13">
+    <li class="maze-room">
       <p>Room 10,13</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-7">
+    <li class="maze-room">
       <p>Room 15,7</p>
       <p>There are doors to the north, west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-7-15">
+    <li class="maze-room">
       <p>Room 7,15</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-14">
+    <li class="maze-room">
       <p>Room 9,14</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-9">
+    <li class="maze-room">
       <p>Room 14,9</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-12">
+    <li class="maze-room">
       <p>Room 12,12</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-8">
+    <li class="maze-room">
       <p>Room 15,8</p>
       <p>There are doors to the north, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-8-15">
+    <li class="maze-room">
       <p>Room 8,15</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-13">
+    <li class="maze-room">
       <p>Room 11,13</p>
       <p>There are doors to the south, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-11">
+    <li class="maze-room">
       <p>Room 13,11</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-14">
+    <li class="maze-room">
       <p>Room 10,14</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-10">
+    <li class="maze-room">
       <p>Room 14,10</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-9">
+    <li class="maze-room">
       <p>Room 15,9</p>
       <p>There is a door to the north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-9-15">
+    <li class="maze-room">
       <p>Room 9,15</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-12">
+    <li class="maze-room">
       <p>Room 13,12</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-13">
+    <li class="maze-room">
       <p>Room 12,13</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-14">
+    <li class="maze-room">
       <p>Room 11,14</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-11">
+    <li class="maze-room">
       <p>Room 14,11</p>
       <p>There are doors to the east, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-10">
+    <li class="maze-room">
       <p>Room 15,10</p>
       <p>There is a door to the south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-10-15">
+    <li class="maze-room">
       <p>Room 10,15</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-13">
+    <li class="maze-room">
       <p>Room 13,13</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-14">
+    <li class="maze-room">
       <p>Room 12,14</p>
       <p>There are doors to the east, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-12">
+    <li class="maze-room">
       <p>Room 14,12</p>
       <p>There are doors to the south, west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-11">
+    <li class="maze-room">
       <p>Room 15,11</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-11-15">
+    <li class="maze-room">
       <p>Room 11,15</p>
       <p>There are doors to the west, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-14">
+    <li class="maze-room">
       <p>Room 13,14</p>
       <p>There are doors to the north, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-13">
+    <li class="maze-room">
       <p>Room 14,13</p>
       <p>There are doors to the south, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-12">
+    <li class="maze-room">
       <p>Room 15,12</p>
       <p>There are doors to the west, and south.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-12-15">
+    <li class="maze-room">
       <p>Room 12,15</p>
       <p>There are doors to the north, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-14">
+    <li class="maze-room">
       <p>Room 14,14</p>
       <p>There are doors to the east, and north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-13">
+    <li class="maze-room">
       <p>Room 15,13</p>
       <p>There is a door to the north.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-13-15">
+    <li class="maze-room">
       <p>Room 13,15</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-14">
+    <li class="maze-room">
       <p>Room 15,14</p>
       <p>There are doors to the south, and west.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-14-15">
+    <li class="maze-room">
       <p>Room 14,15</p>
       <p>There are doors to the west, and east.</p>
     </li>
-    <li tabindex="0" class="maze-room" id="room-15-15">
+    <li class="maze-room">
       <p>Room 15,15</p>
       <p>There are doors to the west, and north.</p>
     </li>
@@ -1973,13 +1934,13 @@ Note: One simple thing we could try is creating a list of all the rooms as HTML.
 </div>
 ```
 
-Note: This is how the HTML comes out.
+Note: Note: One simple thing we could try is creating a list of all the rooms as HTML. It's not pretty, but it does contain all the information in the maze. So it would tick the box for being accessible.
 
 ---
 
 <iframe data-src="/accessible-maze-boring" style="width: 1080px; height: 667px; border: none; overflow: hidden; display: block; margin: 0 auto;"></iframe>
 
-Note: And if we render it, it looks like so. Rather dull. But perhaps we could enhance this a little bit by adding links to adjacent rooms. That way, you could navigate through the list using your keyboard.
+Note: And if we render it, it looks like so. Rather dull. But perhaps we could enhance this a little bit. What if we made each list item focussable, and then added links to adjacent rooms?s That way, you could navigate through the list using your keyboard.
 
 ---
 
@@ -5056,13 +5017,13 @@ Note: And if we render it, it looks like so. Rather dull. But perhaps we could e
 </div>
 ```
 
-Note: So, we've now given each room a list of links that point to the adjacent rooms. They're kind of like doors. And notice how I've given each list item a `tabindex` property. That means it can take focus.
+Note: So, we've added some ids and tabindex attributes, and we've given each room a list of links that point to the adjacent rooms. They're kind of like doors. We've made this a little bit easier to navigate with the keyboard.
 
 ---
 
 <iframe data-src="/accessible-maze-with-links" style="width: 1080px; height: 607.5px; border: none; overflow: hidden; display: block; margin: 0 auto;"></iframe>
 
-Note: If we render that out, it looks like this.
+Note: If we render that out, it looks like this. It's still pretty dull. 
 
 ---
 
@@ -5172,7 +5133,7 @@ Note: If we render that out, it looks like this.
 }
 ```
 
-Note: And now that we've made the list items focusable, perhaps we could add some CSS so that we only show the first room, or whichever list item is focussed. And, while we're playing with CSS, perhaps we could position the links around the text.
+Note: But what if we added some CSS so that we only show the first room, or whichever list item is focussed. And, while we're playing with CSS, perhaps we could position the links around the text. And maybe we could add some background images and border images…
 
 ---
 
